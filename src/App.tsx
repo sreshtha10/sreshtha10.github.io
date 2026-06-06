@@ -97,8 +97,6 @@ function App() {
   const [sunshineState, setSunshineState] = useState<'active' | 'fading' | 'stopped'>('stopped');
   // Mobile menu control state
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  // Skill category filter state
-  const [activeSkillCategory, setActiveSkillCategory] = useState<'all' | 'ai' | 'backend' | 'frontend' | 'devops'>('all');
   // Track previous theme to determine transition direction
   const prevThemeRef = useRef<'sunny' | 'noir'>(theme);
 
@@ -196,13 +194,7 @@ function App() {
     }
   ];
 
-  const filterTabs = [
-    { id: 'all', label: 'All Fields' },
-    { id: 'ai', label: 'AI & ML' },
-    { id: 'backend', label: 'Backend' },
-    { id: 'frontend', label: 'Frontend' },
-    { id: 'devops', label: 'DevOps' }
-  ];
+
 
   return (
     <CursorTrajectoryProvider>
@@ -211,8 +203,8 @@ function App() {
         <CanvasRain isFading={rainState === 'fading'} />
       )}
 
-      {/* Persistent thunder effect in Noir mode (independent of rain intro) */}
-      {theme === 'noir' && rainState === 'stopped' && (
+      {/* Thunder effect triggers only during Noir theme switch (when rain is active) */}
+      {theme === 'noir' && rainState !== 'stopped' && (
         <ThunderFlash />
       )}
 
@@ -562,88 +554,82 @@ function App() {
               </div>
             </section>
 
-            {/* Technical Skills Section with Interactive Category Filter Dashboard */}
+            {/* Technical Skills Section: Modern Bento Grid */}
             <section id="skills" style={{ display: 'flex', flexDirection: 'column', gap: '32px' }}>
               <div style={{ borderBottom: '1px solid var(--card-border)', paddingBottom: '16px' }}>
                 <h2 style={{ fontSize: '1.8rem', fontWeight: 700 }}>Technical Expertise</h2>
                 <p style={{ color: 'var(--text-secondary)' }}>Core technology architectures, frameworks, and programming competencies.</p>
               </div>
 
-              {/* Interactive Skill Dashboard Filters */}
-              <div 
-                style={{ 
-                  display: 'flex', 
-                  gap: '8px', 
-                  flexWrap: 'wrap', 
-                  background: 'var(--card-bg)',
-                  border: '1px solid var(--card-border)',
-                  padding: '6px',
-                  borderRadius: '12px',
-                  alignSelf: 'flex-start',
-                  boxShadow: 'var(--card-shadow)'
-                }}
-              >
-                {filterTabs.map((tab) => (
-                  <button
-                    key={tab.id}
-                    onClick={() => setActiveSkillCategory(tab.id as any)}
-                    style={{
-                      padding: '8px 16px',
-                      borderRadius: '8px',
-                      border: 'none',
-                      background: activeSkillCategory === tab.id ? 'var(--accent)' : 'transparent',
-                      color: activeSkillCategory === tab.id ? 'var(--bg-solid)' : 'var(--text-primary)',
-                      fontFamily: 'var(--font-sans)',
-                      fontWeight: 600,
-                      fontSize: '0.85rem',
-                      cursor: 'pointer',
-                      transition: 'all 0.3s cubic-bezier(0.16, 1, 0.3, 1)'
-                    }}
-                  >
-                    {tab.label}
-                  </button>
-                ))}
-              </div>
-
-              {/* Responsive Skills grid layout */}
-              <div className="skills-grid">
-                {skillCategories.map((cat, idx) => {
-                  const isMatch = activeSkillCategory === 'all' || activeSkillCategory === cat.id;
-
-                  return (
-                    <div 
-                      key={idx} 
-                      className="glass-panel skill-category-card" 
-                      style={{ 
-                        display: 'flex', 
-                        flexDirection: 'column', 
-                        gap: '16px', 
-                        height: '100%', 
-                        justifyContent: 'space-between',
-                        opacity: isMatch ? 1 : 0.3,
-                        transform: isMatch ? 'scale(1)' : 'scale(0.97)',
-                        transition: 'opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1), transform 0.4s cubic-bezier(0.16, 1, 0.3, 1)',
-                        pointerEvents: isMatch ? 'auto' : 'none'
-                      }}
-                    >
-                      <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-                        <div style={{ color: 'var(--text-primary)', display: 'flex', alignItems: 'center', gap: '10px' }}>
-                          {cat.icon}
-                          <h3 style={{ fontSize: '1.15rem', fontWeight: 700 }}>{cat.title}</h3>
-                        </div>
-                        <p style={{ fontSize: '0.88rem', color: 'var(--text-secondary)', lineHeight: '1.5' }}>
-                          {cat.description}
-                        </p>
-                      </div>
-
-                      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', borderTop: '1px solid var(--card-border)', paddingTop: '16px' }}>
-                        {cat.skills.map((skill, sIdx) => (
-                          <SkillBadge key={sIdx} text={skill} />
-                        ))}
-                      </div>
+              <div className="bento-grid">
+                {/* Tile 1: AI & ML Systems (Large) */}
+                <div className="bento-card bento-item-ai">
+                  <div style={{ position: 'absolute', top: '-10%', right: '-10%', opacity: 0.05, transform: 'scale(1.5)' }}>
+                    <Cpu size={240} />
+                  </div>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', zIndex: 1 }}>
+                    <div style={{ color: 'var(--text-primary)', display: 'flex', alignItems: 'center', gap: '10px' }}>
+                      <Cpu size={24} style={{ color: 'var(--accent)' }} />
+                      <h3 style={{ fontSize: '1.4rem', fontWeight: 700 }}>AI & ML Systems</h3>
                     </div>
-                  );
-                })}
+                    <p style={{ fontSize: '0.95rem', color: 'var(--text-secondary)', lineHeight: '1.6', maxWidth: '85%' }}>
+                      Developing LLM agents, dynamic orchestrations, and context architectures. Building robust pipelines for machine learning models and predictive analytics.
+                    </p>
+                  </div>
+                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', zIndex: 1 }}>
+                    {skillCategories.find(c => c.id === 'ai')?.skills.map((skill, sIdx) => (
+                      <SkillBadge key={sIdx} text={skill} />
+                    ))}
+                  </div>
+                </div>
+
+                {/* Tile 2: Backend & Microservices (Wide) */}
+                <div className="bento-card bento-item-backend">
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', zIndex: 1 }}>
+                    <div style={{ color: 'var(--text-primary)', display: 'flex', alignItems: 'center', gap: '10px' }}>
+                      <Server size={20} style={{ color: 'var(--accent)' }} />
+                      <h3 style={{ fontSize: '1.2rem', fontWeight: 700 }}>Backend Architecture</h3>
+                    </div>
+                    <p style={{ fontSize: '0.9rem', color: 'var(--text-secondary)', lineHeight: '1.5' }}>
+                      Architecting distributed APIs, database schemas, and caching layers supporting thousands of concurrent users.
+                    </p>
+                  </div>
+                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', zIndex: 1 }}>
+                    {skillCategories.find(c => c.id === 'backend')?.skills.map((skill, sIdx) => (
+                      <SkillBadge key={sIdx} text={skill} />
+                    ))}
+                  </div>
+                </div>
+
+                {/* Tile 3: Frontend Engineering (Square) */}
+                <div className="bento-card bento-item-frontend">
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', zIndex: 1 }}>
+                    <div style={{ color: 'var(--text-primary)', display: 'flex', alignItems: 'center', gap: '10px' }}>
+                      <Code2 size={20} style={{ color: 'var(--accent)' }} />
+                      <h3 style={{ fontSize: '1.1rem', fontWeight: 700 }}>Frontend UI/UX</h3>
+                    </div>
+                  </div>
+                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', zIndex: 1, marginTop: 'auto' }}>
+                    {skillCategories.find(c => c.id === 'frontend')?.skills.map((skill, sIdx) => (
+                      <SkillBadge key={sIdx} text={skill} />
+                    ))}
+                  </div>
+                </div>
+
+                {/* Tile 4: DevOps & Infrastructure (Square) */}
+                <div className="bento-card bento-item-devops">
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', zIndex: 1 }}>
+                    <div style={{ color: 'var(--text-primary)', display: 'flex', alignItems: 'center', gap: '10px' }}>
+                      <Layers size={20} style={{ color: 'var(--accent)' }} />
+                      <h3 style={{ fontSize: '1.1rem', fontWeight: 700 }}>DevOps & Infra</h3>
+                    </div>
+                  </div>
+                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', zIndex: 1, marginTop: 'auto' }}>
+                    {skillCategories.find(c => c.id === 'devops')?.skills.map((skill, sIdx) => (
+                      <SkillBadge key={sIdx} text={skill} />
+                    ))}
+                  </div>
+                </div>
               </div>
             </section>
 

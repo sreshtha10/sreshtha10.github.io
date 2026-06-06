@@ -8,8 +8,8 @@
   --bg-solid: #FAFAFA;
   --text-primary: #18181B; /* Zinc 900 */
   --text-secondary: #52525B; /* Zinc 600 */
-  --accent: #4F46E5; /* Indigo */
-  --accent-hover: #4338CA;
+  --accent: #10B981; /* Emerald */
+  --accent-hover: #059669; /* Darker Emerald */
   --accent-secondary: #0D9488; /* Teal */
   --accent-secondary-hover: #0F766E;
   
@@ -19,7 +19,7 @@
   
   --input-bg: rgba(255, 255, 255, 0.85);
   --input-border: rgba(24, 24, 27, 0.08);
-  --input-focus: rgba(79, 70, 229, 0.15);
+  --input-focus: rgba(16, 185, 129, 0.15);
 
   --chat-user-bg: #E0E7FF;
   --chat-agent-bg: rgba(255, 255, 255, 0.85);
@@ -252,6 +252,59 @@ h1, h2, h3, h4 {
 
 .hero-heading {
   font-size: 3rem;
+}
+
+/* Bento Grid Layout */
+.bento-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  grid-auto-rows: minmax(180px, auto);
+  gap: 20px;
+  width: 100%;
+}
+
+.bento-item-ai { grid-column: span 2; grid-row: span 2; }
+.bento-item-backend { grid-column: span 2; grid-row: span 1; }
+.bento-item-frontend { grid-column: span 1; grid-row: span 1; }
+.bento-item-devops { grid-column: span 1; grid-row: span 1; }
+
+.bento-card {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 24px;
+  background: var(--card-bg);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--card-border);
+  border-radius: 20px;
+  box-shadow: var(--card-shadow);
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.4s ease;
+  overflow: hidden;
+  position: relative;
+}
+
+.bento-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 16px 40px -10px rgba(16, 185, 129, 0.15); /* Emerald glow */
+  border-color: rgba(16, 185, 129, 0.3);
+}
+
+@media (max-width: 900px) {
+  .bento-grid { grid-template-columns: repeat(2, 1fr); }
+  .bento-item-ai { grid-column: span 2; grid-row: span 1; }
+  .bento-item-backend { grid-column: span 2; grid-row: span 1; }
+  .bento-item-frontend { grid-column: span 1; grid-row: span 1; }
+  .bento-item-devops { grid-column: span 1; grid-row: span 1; }
+}
+
+@media (max-width: 600px) {
+  .bento-grid { grid-template-columns: 1fr; }
+  .bento-item-ai, .bento-item-backend, .bento-item-frontend, .bento-item-devops {
+    grid-column: span 1;
+    grid-row: span 1;
+  }
 }
 
 .skills-grid {

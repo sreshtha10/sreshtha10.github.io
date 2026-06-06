@@ -40,8 +40,8 @@ export const ThunderFlash: React.FC = () => {
     let boltPoints: { x: number; y: number }[][] = [];
     let framesSinceLastFlash = 0;
 
-    // Random interval: flash every 6-15 seconds at 60fps
-    const getNextFlashInterval = () => 360 + Math.floor(Math.random() * 540);
+    // Rapid interval for the theme switch: flash every 0.2 to 1 second
+    const getNextFlashInterval = () => 10 + Math.floor(Math.random() * 50);
     let nextFlashAt = getNextFlashInterval();
 
     let lastWidth = window.innerWidth;

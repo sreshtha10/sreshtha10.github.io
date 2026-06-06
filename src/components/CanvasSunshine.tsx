@@ -5,9 +5,9 @@ interface CanvasSunshineProps {
 }
 
 /**
- * CanvasSunshine (Intro Effect) — A sleek, modern transition for Sunny mode.
- * Renders a crisp vertical scanline and geometric grid pulse,
- * matching the new cool & professional aesthetic.
+ * CanvasSunshine (Intro Effect) — A bright, warm "sunrise" flash.
+ * Renders an intense burst of sunlight that gracefully fades out
+ * to reveal the ambient God Rays.
  */
 export const CanvasSunshine: React.FC<CanvasSunshineProps> = ({ isFading = false }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -45,41 +45,33 @@ export const CanvasSunshine: React.FC<CanvasSunshineProps> = ({ isFading = false
       time += 16;
       ctx.clearRect(0, 0, width, height);
 
-      // Intro animation progression (0 to 1 over ~2 seconds)
+      // Intro animation progression
       const progress = Math.min(time / 2000, 1);
       
-      // Calculate a scanning line position
-      const scanY = height * (progress * 1.5 - 0.25);
-
+      // Intense white/gold flash that dissipates
       if (progress < 1) {
-        // Draw geometric grid fade-in
-        ctx.strokeStyle = `rgba(79, 70, 229, ${(1 - progress) * 0.08})`; // Indigo grid
-        ctx.lineWidth = 1;
-        ctx.beginPath();
+        const sunX = width * 0.95;
+        const sunY = height * 0.05;
         
-        const gridSize = 40;
-        for (let x = 0; x < width; x += gridSize) {
-          ctx.moveTo(x, 0);
-          ctx.lineTo(x, height);
-        }
-        for (let y = 0; y < height; y += gridSize) {
-          ctx.moveTo(0, y);
-          ctx.lineTo(width, y);
-        }
+        ctx.globalCompositeOperation = 'screen';
+        
+        // Main intense flash
+        const flashAlpha = (1 - progress) * 0.8;
+        const flashGrad = ctx.createRadialGradient(sunX, sunY, 0, sunX, sunY, Math.max(width, height) * 1.5);
+        flashGrad.addColorStop(0, `rgba(255, 255, 255, ${flashAlpha})`);
+        flashGrad.addColorStop(0.3, `rgba(255, 240, 180, ${flashAlpha * 0.7})`);
+        flashGrad.addColorStop(1, 'rgba(255, 200, 100, 0)');
+        
+        ctx.fillStyle = flashGrad;
+        ctx.fillRect(0, 0, width, height);
+        
+        // Expanding sun ring
+        const ringRadius = progress * Math.max(width, height) * 0.8;
+        ctx.beginPath();
+        ctx.arc(sunX, sunY, ringRadius, 0, Math.PI * 2);
+        ctx.strokeStyle = `rgba(255, 220, 100, ${(1 - progress) * 0.4})`;
+        ctx.lineWidth = 40 * (1 - progress);
         ctx.stroke();
-
-        // Draw the sleek horizontal scanner
-        const scanGrad = ctx.createLinearGradient(0, scanY - 50, 0, scanY + 50);
-        scanGrad.addColorStop(0, 'rgba(13, 148, 136, 0)'); // Teal fade
-        scanGrad.addColorStop(0.5, `rgba(13, 148, 136, ${(1 - progress) * 0.4})`);
-        scanGrad.addColorStop(1, 'rgba(13, 148, 136, 0)');
-
-        ctx.fillStyle = scanGrad;
-        ctx.fillRect(0, scanY - 50, width, 100);
-
-        // Bright leading edge
-        ctx.fillStyle = `rgba(255, 255, 255, ${(1 - progress) * 0.8})`;
-        ctx.fillRect(0, scanY - 1, width, 2);
       }
 
       animationFrameId = requestAnimationFrame(update);
