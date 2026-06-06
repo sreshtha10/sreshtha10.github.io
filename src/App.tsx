@@ -80,11 +80,11 @@ const SkillBadge = ({ text }: { text: string }) => (
 );
 
 function App() {
-  const [theme, setTheme] = useState<'sunny' | 'noir'>('noir');
-  // State machine for rain animation loading/switch sequence
-  const [rainState, setRainState] = useState<'active' | 'fading' | 'stopped'>('active');
-  // Sunny intro effect state
-  const [sunshineState, setSunshineState] = useState<'active' | 'fading' | 'stopped'>('stopped');
+  const [theme, setTheme] = useState<'sunny' | 'noir'>('sunny');
+  // Rain is for Noir theme, Sunshine is for Sunny theme
+  const [rainState, setRainState] = useState<'active' | 'fading' | 'stopped'>('stopped');
+  // Track sunshine animation (intro fade effect)
+  const [sunshineState, setSunshineState] = useState<'active' | 'fading' | 'stopped'>('active');
   // Mobile menu control state
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   // Track previous theme to determine transition direction
