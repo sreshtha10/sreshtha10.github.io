@@ -72,18 +72,7 @@ const SkillBadge = ({ text }: { text: string }) => (
       fontSize: '0.8rem',
       fontWeight: 500,
       color: 'var(--text-primary)',
-      transition: 'all 0.2s ease',
       boxShadow: '0 2px 8px rgba(0,0,0,0.02)'
-    }}
-    onMouseEnter={(e) => {
-      e.currentTarget.style.borderColor = 'var(--accent)';
-      e.currentTarget.style.transform = 'translateY(-1.5px)';
-      e.currentTarget.style.boxShadow = '0 4px 12px rgba(0,0,0,0.05)';
-    }}
-    onMouseLeave={(e) => {
-      e.currentTarget.style.borderColor = 'var(--card-border)';
-      e.currentTarget.style.transform = 'translateY(0)';
-      e.currentTarget.style.boxShadow = '0 2px 8px rgba(0,0,0,0.02)';
     }}
   >
     {text}
