@@ -18,34 +18,20 @@ export const SunshineAmbient: React.FC = () => {
     let width = (canvas.width = window.innerWidth);
     let height = (canvas.height = window.innerHeight);
 
-    // Floating warm dust motes
-    const moteCount = 35;
+    // Minimal floating particles
+    const moteCount = 20;
     const motes: {
-      x: number; y: number; vx: number; vy: number; radius: number; opacity: number; hue: number; phase: number;
+      x: number; y: number; vx: number; vy: number; radius: number; opacity: number; phase: number;
     }[] = [];
     for (let i = 0; i < moteCount; i++) {
       motes.push({
         x: Math.random() * width,
         y: Math.random() * height,
-        vx: (Math.random() - 0.5) * 0.2,
-        vy: -0.1 - Math.random() * 0.2, // Drift upward
-        radius: 1 + Math.random() * 3.5,
-        opacity: 0.15 + Math.random() * 0.25,
-        hue: 35 + Math.random() * 20, // Warm golden
+        vx: (Math.random() - 0.5) * 0.1,
+        vy: -0.05 - Math.random() * 0.1, // Very slow drift upward
+        radius: 0.5 + Math.random() * 2,
+        opacity: 0.05 + Math.random() * 0.1, // Very transparent
         phase: Math.random() * Math.PI * 2,
-      });
-    }
-
-    // Volumetric God Rays
-    const rayCount = 6;
-    const rays: { angle: number; width: number; length: number; speed: number; opacity: number }[] = [];
-    for (let i = 0; i < rayCount; i++) {
-      rays.push({
-        angle: Math.PI * 0.6 + (Math.random() * 0.3 - 0.15), // Angles pointing down and left from top right
-        width: 0.05 + Math.random() * 0.08,
-        length: 0.6 + Math.random() * 0.5,
-        speed: (Math.random() - 0.5) * 0.0003,
-        opacity: 0.04 + Math.random() * 0.06
       });
     }
 
@@ -70,52 +56,23 @@ export const SunshineAmbient: React.FC = () => {
     const update = () => {
       time++;
       ctx.clearRect(0, 0, width, height);
-
-      // Top right Sun glow
-      const sunX = width * 0.95;
-      const sunY = height * 0.05;
+      
+      // Extremely subtle, soft top-right glow
+      const sunX = width * 0.8;
+      const sunY = height * 0.2;
       
       ctx.globalCompositeOperation = 'screen';
-      
-      const sunGrad = ctx.createRadialGradient(sunX, sunY, 0, sunX, sunY, Math.max(width, height) * 0.6);
-      sunGrad.addColorStop(0, 'rgba(255, 220, 100, 0.2)');
-      sunGrad.addColorStop(0.3, 'rgba(255, 200, 80, 0.08)');
-      sunGrad.addColorStop(1, 'rgba(255, 200, 80, 0)');
+      const sunGrad = ctx.createRadialGradient(sunX, sunY, 0, sunX, sunY, Math.max(width, height) * 0.5);
+      sunGrad.addColorStop(0, 'rgba(255, 255, 255, 0.08)');
+      sunGrad.addColorStop(1, 'rgba(255, 255, 255, 0)');
       ctx.fillStyle = sunGrad;
       ctx.fillRect(0, 0, width, height);
 
-      // Draw Volumetric Rays
-      ctx.save();
-      ctx.translate(sunX, sunY);
-      for (const ray of rays) {
-        const currentAngle = ray.angle + Math.sin(time * 0.002) * ray.speed * 100;
-        const rayLen = Math.max(width, height) * ray.length;
-
-        ctx.save();
-        ctx.rotate(currentAngle);
-
-        const rayGrad = ctx.createLinearGradient(0, 0, rayLen, 0);
-        rayGrad.addColorStop(0, `rgba(255, 240, 180, ${ray.opacity})`);
-        rayGrad.addColorStop(0.5, `rgba(255, 220, 140, ${ray.opacity * 0.5})`);
-        rayGrad.addColorStop(1, 'rgba(255, 220, 140, 0)');
-
-        ctx.fillStyle = rayGrad;
-        ctx.beginPath();
-        ctx.moveTo(0, 0);
-        ctx.lineTo(rayLen, rayLen * ray.width);
-        ctx.lineTo(rayLen, -rayLen * ray.width);
-        ctx.closePath();
-        ctx.fill();
-
-        ctx.restore();
-      }
-      ctx.restore();
-      
       ctx.globalCompositeOperation = 'source-over';
 
-      // Draw floating dust motes
+      // Draw minimal floating motes
       for (const m of motes) {
-        m.x += m.vx + Math.sin(time * 0.01 + m.phase) * 0.2;
+        m.x += m.vx + Math.sin(time * 0.005 + m.phase) * 0.1;
         m.y += m.vy;
 
         // Wrap around
@@ -126,13 +83,10 @@ export const SunshineAmbient: React.FC = () => {
         if (m.x < -10) m.x = width + 10;
         if (m.x > width + 10) m.x = -10;
 
-        const pulse = 0.6 + 0.4 * Math.sin(time * 0.02 + m.phase);
+        const pulse = 0.8 + 0.2 * Math.sin(time * 0.01 + m.phase);
         const alpha = m.opacity * pulse;
 
-        const moteGrad = ctx.createRadialGradient(m.x, m.y, 0, m.x, m.y, m.radius);
-        moteGrad.addColorStop(0, `hsla(${m.hue}, 90%, 75%, ${alpha})`);
-        moteGrad.addColorStop(1, `hsla(${m.hue}, 90%, 75%, 0)`);
-        ctx.fillStyle = moteGrad;
+        ctx.fillStyle = `rgba(255, 255, 255, ${alpha})`;
         ctx.beginPath();
         ctx.arc(m.x, m.y, m.radius, 0, Math.PI * 2);
         ctx.fill();

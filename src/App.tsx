@@ -9,6 +9,7 @@ import {
   Layers,
   Server,
   Cpu,
+  Database,
   Menu,
   X,
   MessageSquareQuote
@@ -25,8 +26,9 @@ import { CanvasRain } from './components/CanvasRain';
 import { CanvasSunshine } from './components/CanvasSunshine';
 import { ThunderFlash } from './components/ThunderFlash';
 import { SunshineAmbient } from './components/SunshineAmbient';
-import { ObservabilitySandbox } from './components/ObservabilitySandbox';
+
 import { Testimonials } from './components/Testimonials';
+import { ScrollSpy } from './components/ScrollSpy';
 
 // Inline Custom SVG Logos representing organizations
 const ManipalLogo = ({ size = 24 }: { size?: number }) => (
@@ -125,7 +127,7 @@ function App() {
 
   // Rain sequence timers: 2.5s active rain, then 1.5s fading
   useEffect(() => {
-    if (rainState === 'stopped') return;
+    if (rainState !== 'active') return;
 
     const fadeTimer = setTimeout(() => {
       setRainState('fading');
@@ -143,7 +145,7 @@ function App() {
 
   // Sunshine intro: 3s active, then 1.5s fading
   useEffect(() => {
-    if (sunshineState === 'stopped') return;
+    if (sunshineState !== 'active') return;
 
     const fadeTimer = setTimeout(() => {
       setSunshineState('fading');
@@ -166,31 +168,31 @@ function App() {
   const skillCategories = [
     {
       id: 'ai',
-      title: 'AI & ML Systems',
+      title: 'AI & Machine Learning',
       icon: <Cpu size={18} style={{ color: 'var(--accent)' }} />,
       description: 'Developing LLM agents, dynamic orchestrations, and context architectures.',
-      skills: ['LangChain', 'LangSmith', 'MCP', 'OpenAI APIs', 'A2A', 'Model Inference']
+      skills: ['LangChain', 'LangGraph', 'LangSmith', 'MCP', 'OpenAI APIs', 'A2A', 'Model Inference']
     },
     {
-      id: 'backend',
-      title: 'Backend & Microservices',
-      icon: <Server size={18} style={{ color: 'var(--accent)' }} />,
-      description: 'Architecting distributed APIs, database schemas, and caching layers.',
-      skills: ['Python', 'FastAPI', 'Spring Boot', 'Java', 'Node.js', 'Redis', 'MongoDB', 'Memgraph', 'MySQL']
-    },
-    {
-      id: 'frontend',
-      title: 'Frontend Engineering',
+      id: 'fullstack',
+      title: 'Full Stack Architecture',
       icon: <Code2 size={18} style={{ color: 'var(--accent)' }} />,
-      description: 'Crafting responsive client structures with high-fidelity interactions.',
-      skills: ['React', 'TypeScript', 'JavaScript', 'Vite', 'HTML5 / CSS3', 'Figma']
+      description: 'Architecting distributed APIs, database schemas, and responsive client structures.',
+      skills: ['Python', 'FastAPI', 'Java', 'Spring Boot', 'Node.js', 'React', 'TypeScript', 'JavaScript']
     },
     {
-      id: 'devops',
-      title: 'DevOps & Infrastructure',
+      id: 'data',
+      title: 'Data & Observability',
+      icon: <Database size={18} style={{ color: 'var(--accent)' }} />,
+      description: 'Building scalable telemetry, real-time search platforms, and high-volume data layers.',
+      skills: ['ElasticSearch', 'OpenSearch', 'Postgres', 'MongoDB', 'Kafka', 'Redis', 'Splunk', 'Grafana', 'Kibana']
+    },
+    {
+      id: 'cloud',
+      title: 'Cloud & Infrastructure',
       icon: <Layers size={18} style={{ color: 'var(--accent)' }} />,
-      description: 'Automating logs, deployment pipelines, and environment configuration.',
-      skills: ['Docker', 'Jenkins', 'Nginx', 'OpenShift', 'Kafka', 'Ansible', 'Git', 'Linux', 'CCNA', 'DevNet']
+      description: 'Automating deployment pipelines, container orchestration, and environment configuration.',
+      skills: ['Docker', 'Kubernetes', 'Jenkins', 'Linux', 'Nginx', 'Ansible', 'Git', 'CCNA']
     }
   ];
 
@@ -218,6 +220,9 @@ function App() {
         <SunshineAmbient />
       )}
 
+      {/* Floating Scrollspy Navigation */}
+      <ScrollSpy />
+
       <div className="app-container">
         {/* Core Layout filter wrapper */}
         <div className="noir-layout-wrapper" style={{ display: 'flex', flexDirection: 'column', flex: 1, width: '100%' }}>
@@ -226,7 +231,7 @@ function App() {
           <header 
             style={{
               borderBottom: '1px solid var(--card-border)',
-              backgroundColor: 'rgba(255, 255, 255, 0.03)',
+              backgroundColor: 'var(--card-bg)',
               backdropFilter: 'blur(12px)',
               WebkitBackdropFilter: 'blur(12px)',
               position: 'sticky',
@@ -243,19 +248,21 @@ function App() {
                 justifyContent: 'space-between',
               }}
             >
-              {/* Creative Minimal wordmark logo */}
+              {/* Creative Minimal SaaS logo */}
               <a 
                 href="#" 
                 style={{ 
-                  fontFamily: 'var(--font-heading)', 
-                  fontSize: '1.25rem', 
+                  fontFamily: 'var(--font-sans)', 
+                  fontSize: '1.1rem', 
                   fontWeight: 800, 
+                  letterSpacing: '0.2em',
+                  textTransform: 'uppercase',
                   textDecoration: 'none',
                   color: 'var(--text-primary)',
-                  letterSpacing: '-0.03em'
+                  lineHeight: 1
                 }}
               >
-                sreshtha<span style={{ color: 'var(--accent)' }}>.</span>
+                Sreshtha.
               </a>
 
               {/* Navigation Links (Desktop) */}
@@ -285,14 +292,6 @@ function App() {
                   Projects
                 </a>
                 <a 
-                  href="#playground" 
-                  style={{ textDecoration: 'none', color: 'var(--text-secondary)', fontSize: '0.85rem', fontWeight: 600 }}
-                  onMouseEnter={(e) => e.currentTarget.style.color = 'var(--text-primary)'}
-                  onMouseLeave={(e) => e.currentTarget.style.color = 'var(--text-secondary)'}
-                >
-                  Playground
-                </a>
-                <a 
                   href="#testimonials" 
                   style={{ textDecoration: 'none', color: 'var(--text-secondary)', fontSize: '0.85rem', fontWeight: 600 }}
                   onMouseEnter={(e) => e.currentTarget.style.color = 'var(--text-primary)'}
@@ -317,17 +316,17 @@ function App() {
                   style={{
                     background: 'var(--card-bg)',
                     border: '1px solid var(--card-border)',
-                    borderRadius: '9999px',
-                    padding: '6px 12px',
+                    borderRadius: '50%',
+                    padding: '8px',
                     cursor: 'pointer',
                     display: 'flex',
                     alignItems: 'center',
-                    gap: '8px',
+                    justifyContent: 'center',
                     boxShadow: 'var(--card-shadow)',
                     transition: 'all 0.3s ease',
                   }}
                   onMouseEnter={(e) => {
-                    e.currentTarget.style.transform = 'scale(1.05)';
+                    e.currentTarget.style.transform = 'scale(1.1)';
                     e.currentTarget.style.borderColor = 'var(--text-primary)';
                   }}
                   onMouseLeave={(e) => {
@@ -336,15 +335,9 @@ function App() {
                   }}
                 >
                   {theme === 'sunny' ? (
-                    <>
-                      <Sun size={14} style={{ color: '#FF9800' }} />
-                      <span style={{ fontSize: '0.75rem', fontWeight: 600, color: 'var(--text-primary)' }}>Sunny</span>
-                    </>
+                    <Sun size={18} strokeWidth={2} style={{ color: 'var(--accent)' }} />
                   ) : (
-                    <>
-                      <Moon size={14} style={{ color: '#E0E0E0' }} />
-                      <span style={{ fontSize: '0.75rem', fontWeight: 600, color: 'var(--text-primary)' }}>Noir</span>
-                    </>
+                    <Moon size={18} style={{ color: '#E0E0E0' }} />
                   )}
                 </button>
               </nav>
@@ -384,13 +377,6 @@ function App() {
                   Projects
                 </a>
                 <a 
-                  href="#playground" 
-                  style={{ textDecoration: 'none', color: 'var(--text-primary)', fontSize: '1.2rem', fontWeight: 700 }}
-                  onClick={() => setMobileMenuOpen(false)}
-                >
-                  Playground
-                </a>
-                <a 
                   href="#testimonials" 
                   style={{ textDecoration: 'none', color: 'var(--text-primary)', fontSize: '1.2rem', fontWeight: 700 }}
                   onClick={() => setMobileMenuOpen(false)}
@@ -414,26 +400,20 @@ function App() {
                   style={{
                     background: 'var(--card-bg)',
                     border: '1px solid var(--card-border)',
-                    borderRadius: '9999px',
-                    padding: '10px 24px',
+                    borderRadius: '50%',
+                    padding: '12px',
                     cursor: 'pointer',
                     display: 'flex',
                     alignItems: 'center',
-                    gap: '8px',
+                    justifyContent: 'center',
                     boxShadow: 'var(--card-shadow)',
                     marginTop: '16px'
                   }}
                 >
                   {theme === 'sunny' ? (
-                    <>
-                      <Sun size={15} style={{ color: '#FF9800' }} />
-                      <span style={{ fontSize: '0.85rem', fontWeight: 700, color: 'var(--text-primary)' }}>Switch to Noir</span>
-                    </>
+                    <Sun size={20} strokeWidth={2} style={{ color: 'var(--accent)' }} />
                   ) : (
-                    <>
-                      <Moon size={15} style={{ color: '#E0E0E0' }} />
-                      <span style={{ fontSize: '0.85rem', fontWeight: 700, color: 'var(--text-primary)' }}>Switch to Sunny</span>
-                    </>
+                    <Moon size={20} style={{ color: '#E0E0E0' }} />
                   )}
                 </button>
               </div>
@@ -451,30 +431,40 @@ function App() {
               className="hero-grid"
             >
               <div>
-                <div 
-                  style={{ 
-                    display: 'inline-flex', 
-                    alignItems: 'center', 
-                    gap: '8px', 
-                    background: 'var(--card-bg)', 
-                    border: '1px solid var(--card-border)',
-                    borderRadius: '9999px',
-                    padding: '6px 16px',
-                    fontSize: '0.8rem',
-                    fontWeight: 600,
-                    marginBottom: '24px',
-                    boxShadow: 'var(--card-shadow)',
-                    color: 'var(--text-primary)'
-                  }}
-                >
-                  <span style={{ display: 'block', width: '8px', height: '8px', borderRadius: '50%', background: theme === 'sunny' ? '#4f46e5' : '#fff', boxShadow: theme === 'sunny' ? '0 0 8px #4f46e5' : '0 0 8px #fff' }} />
-                  <span>Software Engineer II @ Cisco</span>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginBottom: '24px' }}>
+                  <span style={{ 
+                    fontSize: '1rem', 
+                    color: 'var(--text-secondary)', 
+                    letterSpacing: '0.1em', 
+                    textTransform: 'uppercase',
+                    fontWeight: 600
+                  }}>
+                    Software Engineer II @ Cisco
+                  </span>
                 </div>
                 
-                <h1 className="hero-heading" style={{ marginBottom: '20px', letterSpacing: '-0.02em' }}>
-                  Hi, I'm <span style={{ color: 'var(--accent)', textDecoration: 'underline', textDecorationColor: 'var(--accent-secondary)' }}>Sreshtha Mehrotra</span>.
-                  <br />I design and engineer intelligent microservices.
+                <h1 className="hero-heading" style={{ marginBottom: '16px', letterSpacing: '-0.02em', display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                  <span style={{ fontSize: '2.5rem' }}>Hi, I'm</span>
+                  <span style={{ 
+                    fontFamily: 'var(--font-signature)', 
+                    fontSize: 'clamp(4rem, 8vw, 6rem)', 
+                    color: 'var(--accent)', 
+                    lineHeight: '1.1',
+                    fontWeight: 'normal',
+                    textShadow: '0 4px 20px rgba(0,0,0,0.05)'
+                  }}>Sreshtha Mehrotra</span>
                 </h1>
+                
+                <p 
+                  style={{ 
+                    fontSize: '1.4rem', 
+                    fontWeight: 500,
+                    color: 'var(--text-primary)', 
+                    marginBottom: '16px',
+                  }}
+                >
+                  I design and engineer intelligent microservices.
+                </p>
                 
                 <p 
                   style={{ 
@@ -485,7 +475,7 @@ function App() {
                     lineHeight: '1.7'
                   }}
                 >
-                  Detail-oriented Software Engineer focused on crafting high-concurrency backend services, microservices architectures, and observability networks. Combining structured telemetry, predictive risk assessments, and zero-lag clients.
+                  I design and engineer scalable, AI-driven microservices. Detail-oriented Software Engineer focused on crafting high-concurrency backend architectures, intelligent observability platforms, and predictive ML pipelines. Combining automated log management, proactive risk assessments, and RESTful APIs supporting 10,000+ users with 99.9% uptime.
                 </p>
 
                 {/* Call-to-Action Buttons */}
@@ -523,19 +513,17 @@ function App() {
                 }}
               >
                 <div 
-                  className="glass-panel" 
                   style={{ 
-                    width: '320px', 
-                    height: '320px', 
+                    width: '360px', 
+                    height: '360px', 
                     borderRadius: '50%',
                     display: 'flex',
                     justifyContent: 'center',
                     alignItems: 'center',
                     position: 'relative',
                     overflow: 'hidden',
-                    border: '3px solid var(--accent)',
-                    boxShadow: 'var(--card-shadow)',
-                    padding: 0
+                    background: 'var(--card-bg)',
+                    boxShadow: '0 20px 60px -15px rgba(0,0,0,0.1)'
                   }}
                 >
                   <img 
@@ -587,45 +575,45 @@ function App() {
                 <div className="bento-card bento-item-backend">
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', zIndex: 1 }}>
                     <div style={{ color: 'var(--text-primary)', display: 'flex', alignItems: 'center', gap: '10px' }}>
-                      <Server size={20} style={{ color: 'var(--accent)' }} />
-                      <h3 style={{ fontSize: '1.2rem', fontWeight: 700 }}>Backend Architecture</h3>
+                      <Code2 size={20} style={{ color: 'var(--accent)' }} />
+                      <h3 style={{ fontSize: '1.2rem', fontWeight: 700 }}>Full Stack Architecture</h3>
                     </div>
                     <p style={{ fontSize: '0.9rem', color: 'var(--text-secondary)', lineHeight: '1.5' }}>
-                      Architecting distributed APIs, database schemas, and caching layers supporting thousands of concurrent users.
+                      Architecting distributed APIs, database schemas, and responsive client structures.
                     </p>
                   </div>
                   <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', zIndex: 1 }}>
-                    {skillCategories.find(c => c.id === 'backend')?.skills.map((skill, sIdx) => (
+                    {skillCategories.find(c => c.id === 'fullstack')?.skills.map((skill, sIdx) => (
                       <SkillBadge key={sIdx} text={skill} />
                     ))}
                   </div>
                 </div>
 
-                {/* Tile 3: Frontend Engineering (Square) */}
+                {/* Tile 3: Data & Observability (Square) */}
                 <div className="bento-card bento-item-frontend">
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', zIndex: 1 }}>
                     <div style={{ color: 'var(--text-primary)', display: 'flex', alignItems: 'center', gap: '10px' }}>
-                      <Code2 size={20} style={{ color: 'var(--accent)' }} />
-                      <h3 style={{ fontSize: '1.1rem', fontWeight: 700 }}>Frontend UI/UX</h3>
+                      <Database size={20} style={{ color: 'var(--accent)' }} />
+                      <h3 style={{ fontSize: '1.1rem', fontWeight: 700 }}>Data & Observability</h3>
                     </div>
                   </div>
                   <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', zIndex: 1, marginTop: 'auto' }}>
-                    {skillCategories.find(c => c.id === 'frontend')?.skills.map((skill, sIdx) => (
+                    {skillCategories.find(c => c.id === 'data')?.skills.map((skill, sIdx) => (
                       <SkillBadge key={sIdx} text={skill} />
                     ))}
                   </div>
                 </div>
 
-                {/* Tile 4: DevOps & Infrastructure (Square) */}
+                {/* Tile 4: Cloud & Infra (Square) */}
                 <div className="bento-card bento-item-devops">
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', zIndex: 1 }}>
                     <div style={{ color: 'var(--text-primary)', display: 'flex', alignItems: 'center', gap: '10px' }}>
                       <Layers size={20} style={{ color: 'var(--accent)' }} />
-                      <h3 style={{ fontSize: '1.1rem', fontWeight: 700 }}>DevOps & Infra</h3>
+                      <h3 style={{ fontSize: '1.1rem', fontWeight: 700 }}>Cloud & Infra</h3>
                     </div>
                   </div>
                   <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', zIndex: 1, marginTop: 'auto' }}>
-                    {skillCategories.find(c => c.id === 'devops')?.skills.map((skill, sIdx) => (
+                    {skillCategories.find(c => c.id === 'cloud')?.skills.map((skill, sIdx) => (
                       <SkillBadge key={sIdx} text={skill} />
                     ))}
                   </div>
@@ -876,31 +864,6 @@ function App() {
               </div>
             </section>
 
-            {/* Interactive Playground Section */}
-            <section id="playground" style={{ display: 'flex', flexDirection: 'column', gap: '32px' }}>
-              <div style={{ borderBottom: '1px solid var(--card-border)', paddingBottom: '16px' }}>
-                <h2 style={{ fontSize: '1.8rem', fontWeight: 700 }}>Interactive Playground</h2>
-                <p style={{ color: 'var(--text-secondary)' }}>Distributed systems telemetry diagnostics and chaos controls.</p>
-              </div>
-
-              {/* Chaos & Observability Simulator */}
-              <ObservabilitySandbox />
-            </section>
-
-            {/* Testimonials Section */}
-            <section id="testimonials" style={{ display: 'flex', flexDirection: 'column', gap: '32px' }}>
-              <div style={{ borderBottom: '1px solid var(--card-border)', paddingBottom: '16px' }}>
-                <h2 style={{ fontSize: '1.8rem', fontWeight: 700 }}>
-                  <span style={{ display: 'inline-flex', alignItems: 'center', gap: '12px' }}>
-                    <MessageSquareQuote size={28} style={{ color: 'var(--accent)' }} />
-                    Testimonials
-                  </span>
-                </h2>
-                <p style={{ color: 'var(--text-secondary)' }}>What colleagues and peers say about working together.</p>
-              </div>
-
-              <Testimonials />
-            </section>
 
             {/* Education & Academic Section */}
             <section id="education" style={{ display: 'flex', flexDirection: 'column', gap: '32px' }}>
@@ -980,13 +943,29 @@ function App() {
               </div>
             </section>
 
+            {/* Testimonials Section */}
+            <section id="testimonials" style={{ display: 'flex', flexDirection: 'column', gap: '32px' }}>
+              <div style={{ borderBottom: '1px solid var(--card-border)', paddingBottom: '16px' }}>
+                <h2 style={{ fontSize: '1.8rem', fontWeight: 700 }}>
+                  <span style={{ display: 'inline-flex', alignItems: 'center', gap: '12px' }}>
+                    <MessageSquareQuote size={28} style={{ color: 'var(--accent)' }} />
+                    Testimonials
+                  </span>
+                </h2>
+                <p style={{ color: 'var(--text-secondary)' }}>What colleagues and peers say about working together.</p>
+              </div>
+
+              <Testimonials />
+            </section>
+
           </main>
 
           {/* Page Footer */}
           <footer 
             style={{ 
               borderTop: '1px solid var(--card-border)', 
-              backgroundColor: 'var(--bg-solid)', 
+              backgroundColor: 'var(--card-bg)', 
+              backdropFilter: 'blur(12px)',
               padding: '32px 0',
               marginTop: 'auto',
               transition: 'background-color 0.5s ease'
@@ -1002,12 +981,9 @@ function App() {
                 gap: '24px'
               }}
             >
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
-                <div style={{ fontSize: '0.9rem', fontWeight: 700, color: 'var(--text-primary)' }}>
-                  Sreshtha Mehrotra
-                </div>
-                <div style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', fontWeight: 500 }}>
-                  Systems & Microservices Engineering • sreshtha.mehrotra@gmail.com
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                <div style={{ fontFamily: 'var(--font-sans)', fontSize: '1.1rem', fontWeight: 800, color: 'var(--text-primary)', letterSpacing: '0.1em', textTransform: 'uppercase' }}>
+                  AI/ML and Full Stack Engineer
                 </div>
               </div>
               
