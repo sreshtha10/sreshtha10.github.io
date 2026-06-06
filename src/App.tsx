@@ -658,7 +658,7 @@ function App() {
               <div className="glass-panel" style={{ width: '100%', padding: '32px' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '36px', flexWrap: 'wrap' }}>
                   <div style={{
-                    background: 'var(--text-primary)',
+                    background: '#18181B',
                     color: 'var(--bg-solid)',
                     padding: '8px 12px',
                     borderRadius: '12px',
