@@ -7,7 +7,6 @@ import {
   FileText,
   Award,
   Layers,
-  Server,
   Cpu,
   Database,
   Menu,
