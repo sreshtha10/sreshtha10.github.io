@@ -16,6 +16,7 @@ import {
 
 import resumePdf from './assets/resume.pdf';
 import heroDp from './assets/hero_dp.png';
+import ciscoLogo from './assets/cisco.svg';
 
 // Import custom components
 import { CursorTrajectoryProvider } from './context/CursorTrajectoryContext';
@@ -28,20 +29,6 @@ import { ObservabilitySandbox } from './components/ObservabilitySandbox';
 import { Testimonials } from './components/Testimonials';
 
 // Inline Custom SVG Logos representing organizations
-const CiscoLogo = ({ size = 24 }: { size?: number }) => (
-  <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor" style={{ display: 'inline-block', verticalAlign: 'middle' }}>
-    <rect x="2" y="14" width="1.5" height="6" rx="0.75" />
-    <rect x="4.25" y="10" width="1.5" height="10" rx="0.75" />
-    <rect x="6.5" y="4" width="1.5" height="16" rx="0.75" />
-    <rect x="8.75" y="10" width="1.5" height="10" rx="0.75" />
-    <rect x="11" y="14" width="1.5" height="6" rx="0.75" />
-    <rect x="13.25" y="10" width="1.5" height="10" rx="0.75" />
-    <rect x="15.5" y="4" width="1.5" height="16" rx="0.75" />
-    <rect x="17.75" y="10" width="1.5" height="10" rx="0.75" />
-    <rect x="20" y="14" width="1.5" height="6" rx="0.75" />
-  </svg>
-);
-
 const ManipalLogo = ({ size = 24 }: { size?: number }) => (
   <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ display: 'inline-block', verticalAlign: 'middle' }}>
     <path d="M12 2L2 7l10 5 10-5-10-5z" />
@@ -673,13 +660,15 @@ function App() {
                   <div style={{
                     background: 'var(--text-primary)',
                     color: 'var(--bg-solid)',
-                    padding: '12px',
-                    borderRadius: '16px',
+                    padding: '8px 12px',
+                    borderRadius: '12px',
                     display: 'flex',
                     alignItems: 'center',
-                    justifyContent: 'center'
+                    justifyContent: 'center',
+                    height: '48px',
+                    width: '64px'
                   }}>
-                    <CiscoLogo size={32} />
+                    <img src={ciscoLogo} alt="Cisco Logo" style={{ width: '100%', height: '100%', objectFit: 'contain', filter: 'brightness(0) invert(1)' }} />
                   </div>
                   <div>
                     <h3 style={{ fontSize: '1.5rem', fontWeight: 700 }}>Cisco Systems</h3>

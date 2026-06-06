@@ -41,7 +41,7 @@ export const CanvasSunshine: React.FC<CanvasSunshineProps> = ({ isFading = false
         vx: (Math.random() - 0.5) * 0.4,
         vy: -0.2 - Math.random() * 0.3, // Float upward gently
         radius: 2 + Math.random() * 4,
-        opacity: 0.1 + Math.random() * 0.15,
+        opacity: 0.2 + Math.random() * 0.25,
         hue: 35 + Math.random() * 20, // Warm golden hues
         life: Math.random() * maxLife,
         maxLife,
@@ -87,8 +87,8 @@ export const CanvasSunshine: React.FC<CanvasSunshineProps> = ({ isFading = false
       const sunX = width * 0.85;
       const sunY = height * 0.05;
       const sunGradient = ctx.createRadialGradient(sunX, sunY, 0, sunX, sunY, Math.max(width, height) * 0.6);
-      sunGradient.addColorStop(0, 'rgba(255, 200, 50, 0.06)');
-      sunGradient.addColorStop(0.3, 'rgba(255, 180, 60, 0.03)');
+      sunGradient.addColorStop(0, 'rgba(255, 200, 50, 0.15)');
+      sunGradient.addColorStop(0.3, 'rgba(255, 180, 60, 0.08)');
       sunGradient.addColorStop(1, 'rgba(255, 180, 60, 0)');
       ctx.fillStyle = sunGradient;
       ctx.fillRect(0, 0, width, height);
@@ -104,8 +104,8 @@ export const CanvasSunshine: React.FC<CanvasSunshineProps> = ({ isFading = false
         ctx.rotate(currentAngle);
 
         const gradient = ctx.createLinearGradient(0, 0, rayLen, 0);
-        gradient.addColorStop(0, 'rgba(255, 210, 80, 0.05)');
-        gradient.addColorStop(0.5, 'rgba(255, 210, 80, 0.02)');
+        gradient.addColorStop(0, 'rgba(255, 210, 80, 0.12)');
+        gradient.addColorStop(0.5, 'rgba(255, 210, 80, 0.06)');
         gradient.addColorStop(1, 'rgba(255, 210, 80, 0)');
 
         ctx.fillStyle = gradient;
@@ -138,13 +138,13 @@ export const CanvasSunshine: React.FC<CanvasSunshineProps> = ({ isFading = false
           p.y = height + 10;
           p.life = 0;
           p.maxLife = 200 + Math.random() * 300;
-          p.opacity = 0.1 + Math.random() * 0.15;
+          p.opacity = 0.2 + Math.random() * 0.25;
           continue;
         }
 
         const gradient = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.radius);
-        gradient.addColorStop(0, `hsla(${p.hue}, 80%, 70%, ${alpha})`);
-        gradient.addColorStop(1, `hsla(${p.hue}, 80%, 70%, 0)`);
+        gradient.addColorStop(0, `hsla(${p.hue}, 90%, 65%, ${alpha})`);
+        gradient.addColorStop(1, `hsla(${p.hue}, 90%, 65%, 0)`);
         ctx.fillStyle = gradient;
         ctx.beginPath();
         ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);

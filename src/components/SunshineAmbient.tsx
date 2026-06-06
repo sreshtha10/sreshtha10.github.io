@@ -40,7 +40,7 @@ export const SunshineAmbient: React.FC = () => {
         vx: (Math.random() - 0.5) * 0.2,
         vy: -0.1 - Math.random() * 0.15,
         radius: 1.5 + Math.random() * 3,
-        opacity: 0.06 + Math.random() * 0.08,
+        opacity: 0.25 + Math.random() * 0.35,
         hue: 35 + Math.random() * 25,
         phase: Math.random() * Math.PI * 2,
       });
@@ -84,9 +84,9 @@ export const SunshineAmbient: React.FC = () => {
       const sunX = width * 0.9;
       const sunY = height * 0.02;
       const gradient = ctx.createRadialGradient(sunX, sunY, 0, sunX, sunY, Math.max(width, height) * 0.5);
-      gradient.addColorStop(0, 'rgba(255, 210, 60, 0.03)');
-      gradient.addColorStop(0.4, 'rgba(255, 190, 50, 0.015)');
-      gradient.addColorStop(1, 'rgba(255, 190, 50, 0)');
+      gradient.addColorStop(0, 'rgba(255, 200, 50, 0.12)');
+      gradient.addColorStop(0.4, 'rgba(255, 180, 30, 0.06)');
+      gradient.addColorStop(1, 'rgba(255, 180, 30, 0)');
       ctx.fillStyle = gradient;
       ctx.fillRect(0, 0, width, height);
 
@@ -101,9 +101,9 @@ export const SunshineAmbient: React.FC = () => {
         ctx.rotate(currentAngle);
 
         const rayGrad = ctx.createLinearGradient(0, 0, rayLen, 0);
-        rayGrad.addColorStop(0, 'rgba(255, 215, 80, 0.025)');
-        rayGrad.addColorStop(0.6, 'rgba(255, 215, 80, 0.01)');
-        rayGrad.addColorStop(1, 'rgba(255, 215, 80, 0)');
+        rayGrad.addColorStop(0, 'rgba(255, 200, 50, 0.1)');
+        rayGrad.addColorStop(0.6, 'rgba(255, 200, 50, 0.04)');
+        rayGrad.addColorStop(1, 'rgba(255, 200, 50, 0)');
 
         ctx.fillStyle = rayGrad;
         ctx.beginPath();
@@ -136,8 +136,8 @@ export const SunshineAmbient: React.FC = () => {
         const alpha = m.opacity * pulse;
 
         const moteGrad = ctx.createRadialGradient(m.x, m.y, 0, m.x, m.y, m.radius);
-        moteGrad.addColorStop(0, `hsla(${m.hue}, 75%, 72%, ${alpha})`);
-        moteGrad.addColorStop(1, `hsla(${m.hue}, 75%, 72%, 0)`);
+        moteGrad.addColorStop(0, `hsla(${m.hue}, 90%, 65%, ${alpha})`);
+        moteGrad.addColorStop(1, `hsla(${m.hue}, 90%, 65%, 0)`);
         ctx.fillStyle = moteGrad;
         ctx.beginPath();
         ctx.arc(m.x, m.y, m.radius, 0, Math.PI * 2);
