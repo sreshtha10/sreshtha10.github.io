@@ -1,9 +1,9 @@
 import { useState, useEffect, useRef } from 'react';
-import { 
-  Sun, 
-  Moon, 
-  Code2, 
-  Mail, 
+import {
+  Sun,
+  Moon,
+  Code2,
+  Mail,
   FileText,
   Award,
   Layers,
@@ -63,7 +63,7 @@ const LinkedinIcon = ({ size = 18 }: { size?: number }) => (
 );
 
 const SkillBadge = ({ text }: { text: string }) => (
-  <span 
+  <span
     style={{
       display: 'inline-block',
       padding: '6px 12px',
@@ -106,22 +106,22 @@ function App() {
   useEffect(() => {
     document.documentElement.setAttribute('data-theme', theme);
     document.body.setAttribute('data-theme', theme);
-    
+
     // Rain only triggers when switching TO noir, or on initial noir load
     const isInitialLoad = prevThemeRef.current === theme;
     const isSwitchingToNoir = prevThemeRef.current === 'sunny' && theme === 'noir';
     const isSwitchingToSunny = prevThemeRef.current === 'noir' && theme === 'sunny';
-    
+
     if ((theme === 'noir' && isInitialLoad) || isSwitchingToNoir) {
       setRainState('active');
       setSunshineState('stopped');
     }
-    
+
     if (isSwitchingToSunny) {
       setSunshineState('active');
       setRainState('stopped');
     }
-    
+
     prevThemeRef.current = theme;
   }, [theme]);
 
@@ -226,9 +226,9 @@ function App() {
       <div className="app-container">
         {/* Core Layout filter wrapper */}
         <div className="noir-layout-wrapper" style={{ display: 'flex', flexDirection: 'column', flex: 1, width: '100%' }}>
-          
+
           {/* Global Header Navigation */}
-          <header 
+          <header
             style={{
               borderBottom: '1px solid var(--card-border)',
               backgroundColor: 'var(--card-bg)',
@@ -239,8 +239,8 @@ function App() {
               zIndex: 40,
             }}
           >
-            <div 
-              className="content-container" 
+            <div
+              className="content-container"
               style={{
                 height: '72px',
                 flexDirection: 'row',
@@ -249,12 +249,12 @@ function App() {
               }}
             >
               {/* Creative Minimal SaaS logo */}
-              <a 
-                href="#" 
-                style={{ 
-                  fontFamily: 'var(--font-sans)', 
-                  fontSize: '1.1rem', 
-                  fontWeight: 800, 
+              <a
+                href="#"
+                style={{
+                  fontFamily: 'var(--font-sans)',
+                  fontSize: '1.1rem',
+                  fontWeight: 800,
                   letterSpacing: '0.2em',
                   textTransform: 'uppercase',
                   textDecoration: 'none',
@@ -267,40 +267,40 @@ function App() {
 
               {/* Navigation Links (Desktop) */}
               <nav className="desktop-nav">
-                <a 
-                  href="#skills" 
+                <a
+                  href="#skills"
                   style={{ textDecoration: 'none', color: 'var(--text-secondary)', fontSize: '0.85rem', fontWeight: 600 }}
                   onMouseEnter={(e) => e.currentTarget.style.color = 'var(--text-primary)'}
                   onMouseLeave={(e) => e.currentTarget.style.color = 'var(--text-secondary)'}
                 >
                   Skills
                 </a>
-                <a 
-                  href="#experience" 
+                <a
+                  href="#experience"
                   style={{ textDecoration: 'none', color: 'var(--text-secondary)', fontSize: '0.85rem', fontWeight: 600 }}
                   onMouseEnter={(e) => e.currentTarget.style.color = 'var(--text-primary)'}
                   onMouseLeave={(e) => e.currentTarget.style.color = 'var(--text-secondary)'}
                 >
                   Experience
                 </a>
-                <a 
-                  href="#projects" 
+                <a
+                  href="#projects"
                   style={{ textDecoration: 'none', color: 'var(--text-secondary)', fontSize: '0.85rem', fontWeight: 600 }}
                   onMouseEnter={(e) => e.currentTarget.style.color = 'var(--text-primary)'}
                   onMouseLeave={(e) => e.currentTarget.style.color = 'var(--text-secondary)'}
                 >
                   Projects
                 </a>
-                <a 
-                  href="#testimonials" 
+                <a
+                  href="#testimonials"
                   style={{ textDecoration: 'none', color: 'var(--text-secondary)', fontSize: '0.85rem', fontWeight: 600 }}
                   onMouseEnter={(e) => e.currentTarget.style.color = 'var(--text-primary)'}
                   onMouseLeave={(e) => e.currentTarget.style.color = 'var(--text-secondary)'}
                 >
                   Testimonials
                 </a>
-                <a 
-                  href="#education" 
+                <a
+                  href="#education"
                   style={{ textDecoration: 'none', color: 'var(--text-secondary)', fontSize: '0.85rem', fontWeight: 600 }}
                   onMouseEnter={(e) => e.currentTarget.style.color = 'var(--text-primary)'}
                   onMouseLeave={(e) => e.currentTarget.style.color = 'var(--text-secondary)'}
@@ -343,8 +343,8 @@ function App() {
               </nav>
 
               {/* Hamburger Menu Toggle (Mobile) */}
-              <button 
-                className="mobile-nav-toggle" 
+              <button
+                className="mobile-nav-toggle"
                 onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
                 aria-label="Toggle Menu"
               >
@@ -355,36 +355,36 @@ function App() {
             {/* Mobile Navigation Dropdown Drawer */}
             {mobileMenuOpen && (
               <div className="mobile-menu-overlay">
-                <a 
-                  href="#skills" 
+                <a
+                  href="#skills"
                   style={{ textDecoration: 'none', color: 'var(--text-primary)', fontSize: '1.2rem', fontWeight: 700 }}
                   onClick={() => setMobileMenuOpen(false)}
                 >
                   Skills
                 </a>
-                <a 
-                  href="#experience" 
+                <a
+                  href="#experience"
                   style={{ textDecoration: 'none', color: 'var(--text-primary)', fontSize: '1.2rem', fontWeight: 700 }}
                   onClick={() => setMobileMenuOpen(false)}
                 >
                   Experience
                 </a>
-                <a 
-                  href="#projects" 
+                <a
+                  href="#projects"
                   style={{ textDecoration: 'none', color: 'var(--text-primary)', fontSize: '1.2rem', fontWeight: 700 }}
                   onClick={() => setMobileMenuOpen(false)}
                 >
                   Projects
                 </a>
-                <a 
-                  href="#testimonials" 
+                <a
+                  href="#testimonials"
                   style={{ textDecoration: 'none', color: 'var(--text-primary)', fontSize: '1.2rem', fontWeight: 700 }}
                   onClick={() => setMobileMenuOpen(false)}
                 >
                   Testimonials
                 </a>
-                <a 
-                  href="#education" 
+                <a
+                  href="#education"
                   style={{ textDecoration: 'none', color: 'var(--text-primary)', fontSize: '1.2rem', fontWeight: 700 }}
                   onClick={() => setMobileMenuOpen(false)}
                 >
@@ -422,9 +422,9 @@ function App() {
 
           {/* Main Portfolio Sections */}
           <main className="content-container" style={{ gap: '96px', paddingBottom: '120px', paddingTop: '48px' }}>
-            
+
             {/* Hero Greeting Section */}
-            <section 
+            <section
               style={{
                 alignItems: 'center',
               }}
@@ -432,44 +432,44 @@ function App() {
             >
               <div>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginBottom: '24px' }}>
-                  <span style={{ 
-                    fontSize: '1rem', 
-                    color: 'var(--text-secondary)', 
-                    letterSpacing: '0.1em', 
+                  <span style={{
+                    fontSize: '1rem',
+                    color: 'var(--text-secondary)',
+                    letterSpacing: '0.1em',
                     textTransform: 'uppercase',
                     fontWeight: 600
                   }}>
                     Software Engineer II @ Cisco
                   </span>
                 </div>
-                
+
                 <h1 className="hero-heading" style={{ marginBottom: '16px', letterSpacing: '-0.02em', display: 'flex', flexDirection: 'column', gap: '12px' }}>
                   <span style={{ fontSize: '2.5rem' }}>Hi, I'm</span>
-                  <span style={{ 
-                    fontFamily: 'var(--font-signature)', 
-                    fontSize: 'clamp(4rem, 8vw, 6rem)', 
-                    color: 'var(--accent)', 
+                  <span style={{
+                    fontFamily: 'var(--font-signature)',
+                    fontSize: 'clamp(4rem, 8vw, 6rem)',
+                    color: 'var(--accent)',
                     lineHeight: '1.1',
                     fontWeight: 'normal',
                     textShadow: '0 4px 20px rgba(0,0,0,0.05)'
                   }}>Sreshtha Mehrotra</span>
                 </h1>
-                
-                <p 
-                  style={{ 
-                    fontSize: '1.4rem', 
+
+                <p
+                  style={{
+                    fontSize: '1.4rem',
                     fontWeight: 500,
-                    color: 'var(--text-primary)', 
+                    color: 'var(--text-primary)',
                     marginBottom: '16px',
                   }}
                 >
                   I design and engineer intelligent microservices.
                 </p>
-                
-                <p 
-                  style={{ 
-                    fontSize: '1.05rem', 
-                    color: 'var(--text-secondary)', 
+
+                <p
+                  style={{
+                    fontSize: '1.05rem',
+                    color: 'var(--text-secondary)',
                     marginBottom: '40px',
                     maxWidth: '600px',
                     lineHeight: '1.7'
@@ -480,9 +480,9 @@ function App() {
 
                 {/* Call-to-Action Buttons */}
                 <div style={{ display: 'flex', gap: '16px', flexWrap: 'wrap', justifyContent: 'inherit' }}>
-                  <MagneticButton 
-                    id="btn-download-cv" 
-                    variant="primary" 
+                  <MagneticButton
+                    id="btn-download-cv"
+                    variant="primary"
                     style={{ padding: '14px 32px' }}
                     href={resumePdf}
                     target="_blank"
@@ -491,10 +491,10 @@ function App() {
                     <FileText size={16} />
                     <span>Download CV</span>
                   </MagneticButton>
-                  <MagneticButton 
-                    id="btn-contact-me" 
-                    variant="secondary" 
-                    style={{ padding: '14px 32px' }} 
+                  <MagneticButton
+                    id="btn-contact-me"
+                    variant="secondary"
+                    style={{ padding: '14px 32px' }}
                     href="mailto:sreshtha.mehrotra@gmail.com"
                   >
                     <Mail size={16} />
@@ -504,7 +504,7 @@ function App() {
               </div>
 
               {/* Graphical Avatar Card (Zoom image on hover) */}
-              <div 
+              <div
                 style={{
                   display: 'flex',
                   justifyContent: 'center',
@@ -512,10 +512,10 @@ function App() {
                   position: 'relative'
                 }}
               >
-                <div 
-                  style={{ 
-                    width: '360px', 
-                    height: '360px', 
+                <div
+                  style={{
+                    width: '360px',
+                    height: '360px',
                     borderRadius: '50%',
                     display: 'flex',
                     justifyContent: 'center',
@@ -526,9 +526,9 @@ function App() {
                     boxShadow: '0 20px 60px -15px rgba(0,0,0,0.1)'
                   }}
                 >
-                  <img 
-                    src={heroDp} 
-                    alt="Sreshtha Mehrotra Profile" 
+                  <img
+                    src={heroDp}
+                    alt="Sreshtha Mehrotra Profile"
                     style={{
                       width: '100%',
                       height: '100%',
@@ -678,7 +678,7 @@ function App() {
                       border: '3.5px solid var(--accent)',
                       boxShadow: '0 0 10px var(--accent)'
                     }} />
-                    
+
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '8px', marginBottom: '10px' }}>
                       <h4 style={{ fontSize: '1.25rem', fontWeight: 700, color: 'var(--text-primary)' }}>Software Engineer 2</h4>
                       <span style={{ fontSize: '0.8rem', background: 'var(--card-border)', padding: '4px 12px', borderRadius: '9999px', fontWeight: 600, color: 'var(--text-primary)' }}>
@@ -776,9 +776,9 @@ function App() {
 
                 {/* Embedded GitHub Link */}
                 <div style={{ marginTop: '8px' }}>
-                  <a 
-                    href="https://github.com/sreshtha-mehrotra/FIRE" 
-                    target="_blank" 
+                  <a
+                    href="https://github.com/sreshtha10/FIRE"
+                    target="_blank"
                     rel="noreferrer"
                     style={{
                       display: 'inline-flex',
@@ -830,9 +830,9 @@ function App() {
 
                 {/* Embedded GitHub Link */}
                 <div style={{ marginTop: '8px' }}>
-                  <a 
-                    href="https://github.com/sreshtha10/blink" 
-                    target="_blank" 
+                  <a
+                    href="https://github.com/sreshtha10/blink"
+                    target="_blank"
                     rel="noreferrer"
                     style={{
                       display: 'inline-flex',
@@ -961,21 +961,21 @@ function App() {
           </main>
 
           {/* Page Footer */}
-          <footer 
-            style={{ 
-              borderTop: '1px solid var(--card-border)', 
-              backgroundColor: 'var(--card-bg)', 
+          <footer
+            style={{
+              borderTop: '1px solid var(--card-border)',
+              backgroundColor: 'var(--card-bg)',
               backdropFilter: 'blur(12px)',
               padding: '32px 0',
               marginTop: 'auto',
               transition: 'background-color 0.5s ease'
             }}
           >
-            <div 
-              className="content-container" 
-              style={{ 
-                flexDirection: 'row', 
-                justifyContent: 'space-between', 
+            <div
+              className="content-container"
+              style={{
+                flexDirection: 'row',
+                justifyContent: 'space-between',
                 alignItems: 'center',
                 flexWrap: 'wrap',
                 gap: '24px'
@@ -986,16 +986,16 @@ function App() {
                   AI/ML and Full Stack Engineer
                 </div>
               </div>
-              
+
               <div style={{ display: 'flex', alignItems: 'center', gap: '24px', flexWrap: 'wrap' }}>
                 <div style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>
                   © {new Date().getFullYear()} All rights reserved.
                 </div>
-                
+
                 <div style={{ display: 'flex', gap: '16px' }}>
-                  <a 
-                    href="https://github.com/sreshtha-mehrotra" 
-                    target="_blank" 
+                  <a
+                    href="https://github.com/sreshtha10"
+                    target="_blank"
                     rel="noreferrer"
                     style={{ color: 'var(--text-secondary)', display: 'flex', alignItems: 'center', transition: 'color 0.2s' }}
                     onMouseEnter={(e) => e.currentTarget.style.color = 'var(--text-primary)'}
@@ -1003,9 +1003,9 @@ function App() {
                   >
                     <GithubIcon size={18} />
                   </a>
-                  <a 
-                    href="https://linkedin.com/in/sreshtha-mehrotra" 
-                    target="_blank" 
+                  <a
+                    href="https://linkedin.com/in/sreshtha-mehrotra"
+                    target="_blank"
                     rel="noreferrer"
                     style={{ color: 'var(--text-secondary)', display: 'flex', alignItems: 'center', transition: 'color 0.2s' }}
                     onMouseEnter={(e) => e.currentTarget.style.color = 'var(--text-primary)'}
