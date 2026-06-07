@@ -48,8 +48,7 @@ const ArmySchoolLogo = ({ size = 24 }: { size?: number }) => (
 
 const GithubIcon = ({ size = 18 }: { size?: number }) => (
   <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4" />
-    <path d="M9 18c-4.51 2-5-2-7-2" />
+    <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path>
   </svg>
 );
 
@@ -280,14 +279,6 @@ function App() {
                   Projects
                 </a>
                 <a
-                  href="#testimonials"
-                  style={{ textDecoration: 'none', color: 'var(--text-secondary)', fontSize: '0.85rem', fontWeight: 600 }}
-                  onMouseEnter={(e) => e.currentTarget.style.color = 'var(--text-primary)'}
-                  onMouseLeave={(e) => e.currentTarget.style.color = 'var(--text-secondary)'}
-                >
-                  Testimonials
-                </a>
-                <a
                   href="#education"
                   style={{ textDecoration: 'none', color: 'var(--text-secondary)', fontSize: '0.85rem', fontWeight: 600 }}
                   onMouseEnter={(e) => e.currentTarget.style.color = 'var(--text-primary)'}
@@ -295,8 +286,42 @@ function App() {
                 >
                   Education
                 </a>
+                <a
+                  href="#testimonials"
+                  style={{ textDecoration: 'none', color: 'var(--text-secondary)', fontSize: '0.85rem', fontWeight: 600 }}
+                  onMouseEnter={(e) => e.currentTarget.style.color = 'var(--text-primary)'}
+                  onMouseLeave={(e) => e.currentTarget.style.color = 'var(--text-secondary)'}
+                >
+                  Testimonials
+                </a>
 
-                <div style={{ width: '1px', height: '20px', background: 'var(--card-border)' }} />
+                <div style={{ width: '1px', height: '20px', background: 'var(--card-border)', margin: '0 8px' }} />
+
+                {/* Social Icons & Theme Toggles */}
+                <div style={{ display: 'flex', gap: '12px', alignItems: 'center', marginRight: '8px' }}>
+                  <a
+                    href="https://github.com/sreshtha10"
+                    target="_blank"
+                    rel="noreferrer"
+                    style={{ color: 'var(--text-secondary)', display: 'flex', alignItems: 'center', transition: 'color 0.2s' }}
+                    onMouseEnter={(e) => e.currentTarget.style.color = 'var(--text-primary)'}
+                    onMouseLeave={(e) => e.currentTarget.style.color = 'var(--text-secondary)'}
+                    aria-label="GitHub Profile"
+                  >
+                    <GithubIcon size={18} />
+                  </a>
+                  <a
+                    href="https://linkedin.com/in/sreshtha-mehrotra"
+                    target="_blank"
+                    rel="noreferrer"
+                    style={{ color: 'var(--text-secondary)', display: 'flex', alignItems: 'center', transition: 'color 0.2s' }}
+                    onMouseEnter={(e) => e.currentTarget.style.color = 'var(--text-primary)'}
+                    onMouseLeave={(e) => e.currentTarget.style.color = 'var(--text-secondary)'}
+                    aria-label="LinkedIn Profile"
+                  >
+                    <LinkedinIcon size={18} />
+                  </a>
+                </div>
 
                 {/* Theme Switcher Toggle */}
                 <button
@@ -746,7 +771,7 @@ function App() {
               {/* Project Card: FIRE */}
               <div className="glass-panel" style={{ display: 'flex', flexDirection: 'column', gap: '20px', padding: '32px' }}>
                 <div>
-                  <div style={{ display: 'inline-flex', background: 'rgba(13, 148, 136, 0.08)', border: '1px solid rgba(13, 148, 136, 0.2)', padding: '4px 12px', borderRadius: '9999px', color: 'var(--accent-secondary)', fontSize: '0.75rem', fontWeight: 600, marginBottom: '12px' }}>
+                  <div style={{ display: 'inline-flex', background: 'rgba(13, 148, 136, 0.08)', border: '1px solid rgba(13, 148, 136, 0.2)', padding: '4px 12px', borderRadius: '9999px', color: 'var(--accent)', fontSize: '0.75rem', fontWeight: 600, marginBottom: '12px' }}>
                     AI-powered agent
                   </div>
                   <h3 style={{ fontSize: '1.5rem', fontWeight: 700, marginBottom: '12px' }}>Fix and Review (FIRE)</h3>
@@ -919,7 +944,7 @@ function App() {
                       <div style={{ fontSize: '0.88rem', color: 'var(--text-secondary)', fontWeight: 500 }}>
                         Intermediate PCM (CBSE)
                       </div>
-                      <div style={{ fontSize: '0.8rem', color: 'var(--accent-secondary)', fontWeight: 600, marginTop: '6px' }}>
+                      <div style={{ fontSize: '0.8rem', color: 'var(--accent)', fontWeight: 600, marginTop: '6px' }}>
                         Percentage: 96.4%
                       </div>
                     </div>

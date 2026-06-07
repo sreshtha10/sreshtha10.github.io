@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
 
 interface Testimonial {
   name: string;
@@ -45,7 +46,7 @@ export const Testimonials: React.FC = () => {
     setTimeout(() => {
       setActiveIndex(idx);
       setIsAnimating(false);
-    }, 300);
+    }, 150);
   };
 
   // Auto-rotate every 8 seconds
@@ -55,7 +56,7 @@ export const Testimonials: React.FC = () => {
       setTimeout(() => {
         setActiveIndex((prev) => (prev + 1) % testimonials.length);
         setIsAnimating(false);
-      }, 300);
+      }, 150);
     }, 8000);
 
     return () => {
@@ -72,7 +73,7 @@ export const Testimonials: React.FC = () => {
       setTimeout(() => {
         setActiveIndex((prev) => (prev + 1) % testimonials.length);
         setIsAnimating(false);
-      }, 300);
+      }, 150);
     }, 8000);
   };
 
@@ -87,7 +88,7 @@ export const Testimonials: React.FC = () => {
           position: 'relative',
           overflow: 'hidden',
           padding: '40px 36px 36px',
-          minHeight: '280px',
+          minHeight: '380px',
           display: 'flex',
           flexDirection: 'column',
           justifyContent: 'space-between',
@@ -109,7 +110,7 @@ export const Testimonials: React.FC = () => {
           style={{
             opacity: isAnimating ? 0 : 1,
             transform: isAnimating ? 'translateY(8px)' : 'translateY(0)',
-            transition: 'opacity 0.3s ease, transform 0.3s ease',
+            transition: 'opacity 0.15s ease, transform 0.15s ease',
           }}
         >
           {/* Quote text */}
@@ -167,30 +168,72 @@ export const Testimonials: React.FC = () => {
         </div>
       </div>
 
-      {/* Navigation dots */}
+      {/* Navigation dots and arrows */}
       <div style={{
         display: 'flex',
         justifyContent: 'center',
-        gap: '10px',
+        gap: '16px',
         alignItems: 'center',
       }}>
-        {testimonials.map((_, idx) => (
-          <button
-            key={idx}
-            onClick={() => handleManualSwitch(idx)}
-            aria-label={`View testimonial ${idx + 1}`}
-            style={{
-              width: activeIndex === idx ? '28px' : '10px',
-              height: '10px',
-              borderRadius: '5px',
-              border: 'none',
-              background: activeIndex === idx ? 'var(--accent)' : 'var(--card-border)',
-              cursor: 'pointer',
-              transition: 'all 0.3s cubic-bezier(0.16, 1, 0.3, 1)',
-              padding: 0,
-            }}
-          />
-        ))}
+        <button
+          onClick={() => handleManualSwitch((activeIndex - 1 + testimonials.length) % testimonials.length)}
+          aria-label="Previous testimonial"
+          style={{
+            background: 'transparent',
+            border: 'none',
+            color: 'var(--text-secondary)',
+            cursor: 'pointer',
+            padding: '4px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            transition: 'color 0.2s'
+          }}
+          onMouseEnter={(e) => e.currentTarget.style.color = 'var(--text-primary)'}
+          onMouseLeave={(e) => e.currentTarget.style.color = 'var(--text-secondary)'}
+        >
+          <ChevronLeft size={20} />
+        </button>
+
+        <div style={{ display: 'flex', gap: '10px' }}>
+          {testimonials.map((_, idx) => (
+            <button
+              key={idx}
+              onClick={() => handleManualSwitch(idx)}
+              aria-label={`View testimonial ${idx + 1}`}
+              style={{
+                width: activeIndex === idx ? '28px' : '10px',
+                height: '10px',
+                borderRadius: '5px',
+                border: 'none',
+                background: activeIndex === idx ? 'var(--accent)' : 'var(--card-border)',
+                cursor: 'pointer',
+                transition: 'all 0.3s cubic-bezier(0.16, 1, 0.3, 1)',
+                padding: 0,
+              }}
+            />
+          ))}
+        </div>
+
+        <button
+          onClick={() => handleManualSwitch((activeIndex + 1) % testimonials.length)}
+          aria-label="Next testimonial"
+          style={{
+            background: 'transparent',
+            border: 'none',
+            color: 'var(--text-secondary)',
+            cursor: 'pointer',
+            padding: '4px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            transition: 'color 0.2s'
+          }}
+          onMouseEnter={(e) => e.currentTarget.style.color = 'var(--text-primary)'}
+          onMouseLeave={(e) => e.currentTarget.style.color = 'var(--text-secondary)'}
+        >
+          <ChevronRight size={20} />
+        </button>
       </div>
     </div>
   );
