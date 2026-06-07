@@ -10,8 +10,9 @@ import {
   Cpu,
   Database,
   Menu,
-  X,
-  MessageSquareQuote
+  MessageSquareQuote,
+  Users,
+  X
 } from 'lucide-react';
 
 import resumePdf from './assets/resume.pdf';
@@ -279,6 +280,14 @@ function App() {
                   Projects
                 </a>
                 <a
+                  href="#mentorship"
+                  style={{ textDecoration: 'none', color: 'var(--text-secondary)', fontSize: '0.85rem', fontWeight: 600 }}
+                  onMouseEnter={(e) => e.currentTarget.style.color = 'var(--text-primary)'}
+                  onMouseLeave={(e) => e.currentTarget.style.color = 'var(--text-secondary)'}
+                >
+                  Mentorship
+                </a>
+                <a
                   href="#education"
                   style={{ textDecoration: 'none', color: 'var(--text-secondary)', fontSize: '0.85rem', fontWeight: 600 }}
                   onMouseEnter={(e) => e.currentTarget.style.color = 'var(--text-primary)'}
@@ -488,7 +497,7 @@ function App() {
                     lineHeight: '1.7'
                   }}
                 >
-                  I design and engineer scalable, AI-driven microservices. Detail-oriented Software Engineer focused on crafting high-concurrency backend architectures, intelligent observability platforms, and predictive ML pipelines. Combining automated log management, proactive risk assessments, and RESTful APIs supporting 10,000+ users with 99.9% uptime.
+                  Specializing in system observability, high-performance microservices, and AI-driven telemetry. Focused on architecting scalable backend systems, driving zero-downtime deployments, and elevating developer infrastructure for enterprise-scale platforms.
                 </p>
 
                 {/* Call-to-Action Buttons */}
@@ -699,9 +708,9 @@ function App() {
                       </span>
                     </div>
                     <ul style={{ paddingLeft: '20px', display: 'flex', flexDirection: 'column', gap: '6px', fontSize: '0.92rem', color: 'var(--text-secondary)', lineHeight: '1.6' }}>
-                      <li>Led software development of an intelligent infrastructure observability platform enabling natural language queries about health status, providing real-time telemetry integration.</li>
-                      <li>Developed predictive analytics platform using Machine Learning models on deployment data to forecast incident risks and future alerts, improving change success rates by 25%.</li>
-                      <li>Architected scalable microservices architecture using Python and FastAPI for full-stack deployment, supporting 10,000+ concurrent users with 99.9% uptime.</li>
+                      <li>Owned the design and implementation of an intelligent infrastructure observability platform enabling natural language queries, providing real-time telemetry integration for enterprise health status.</li>
+                      <li>Architected a predictive analytics ML pipeline forecasting incident risks and future alerts based on deployment data, directly improving change success rates by 25%.</li>
+                      <li>Engineered scalable FastAPI microservices managing full-stack deployment state efficiency, gracefully supporting 10,000+ concurrent users with 99.9% guaranteed uptime.</li>
                     </ul>
                   </div>
 
@@ -726,9 +735,9 @@ function App() {
                       </span>
                     </div>
                     <ul style={{ paddingLeft: '20px', display: 'flex', flexDirection: 'column', gap: '6px', fontSize: '0.92rem', color: 'var(--text-secondary)', lineHeight: '1.6' }}>
-                      <li>Led full-stack development to refactor and modularize large-scale incident management platform UI, implementing microservices architecture to streamline deployment and enable independent scaling.</li>
-                      <li>Automated log management and enhanced access controls on centralized systems, deploying RBAC and Python/Ansible pipelines with DevOps practices to boost platform stability by 35%.</li>
-                      <li>Implemented CI/CD pipelines using Jenkins and Docker for software development workflows, reducing deployment time from 2 hours to 15 minutes through performance optimization.</li>
+                      <li>Migrated and modularized a large-scale monolithic incident management UI to a highly available microservices architecture, streamlining deployment and enabling independent component scaling.</li>
+                      <li>Architected automated log management and strict RBAC on centralized systems, deploying Python/Ansible pipelines that boosted platform stability by 35%.</li>
+                      <li>Overhauled CI/CD workflows by implementing robust Jenkins and Docker pipelines, optimizing performance to reduce total deployment latency from 2 hours to 15 minutes.</li>
                     </ul>
                   </div>
 
@@ -877,6 +886,49 @@ function App() {
               </div>
             </section>
 
+            {/* Mentorship Section */}
+            <section id="mentorship" style={{ display: 'flex', flexDirection: 'column', gap: '32px' }}>
+              <div style={{ borderBottom: '1px solid var(--card-border)', paddingBottom: '16px' }}>
+                <h2 style={{ fontSize: '1.8rem', fontWeight: 700 }}>
+                  <span style={{ display: 'inline-flex', alignItems: 'center', gap: '12px' }}>
+                    <Users size={28} style={{ color: 'var(--accent)' }} />
+                    Leadership & Mentorship
+                  </span>
+                </h2>
+                <p style={{ color: 'var(--text-secondary)' }}>Elevating engineering standards and empowering the next generation.</p>
+              </div>
+
+              <div className="glass-panel" style={{ display: 'flex', flexDirection: 'column', gap: '20px', padding: '32px' }}>
+                <div style={{ display: 'flex', gap: '16px', alignItems: 'center' }}>
+                  <div style={{
+                    background: 'var(--text-primary)',
+                    color: 'var(--bg-solid)',
+                    padding: '10px',
+                    borderRadius: '12px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    height: '48px',
+                    width: '48px',
+                    flexShrink: 0
+                  }}>
+                    <Users size={24} />
+                  </div>
+                  <div>
+                    <h3 style={{ fontSize: '1.5rem', fontWeight: 700 }}>Engineering Mentor</h3>
+                    <div style={{ fontSize: '0.9rem', color: 'var(--accent)', fontWeight: 600, marginTop: '4px' }}>
+                      Cisco Women In Tech & Peer Mentorship
+                    </div>
+                  </div>
+                </div>
+
+                <ul style={{ paddingLeft: '20px', display: 'flex', flexDirection: 'column', gap: '8px', fontSize: '0.95rem', color: 'var(--text-secondary)', lineHeight: '1.6', marginTop: '8px' }}>
+                  <li>Mentored junior engineers and university students as part of the <strong>Cisco Women In Tech</strong> program, guiding them through technical challenges, career progression, and architecture fundamentals.</li>
+                  <li>Led technical design reviews and established CI/CD best practices within the team, actively raising the engineering bar and ensuring highly resilient systems.</li>
+                  <li>Conducted numerous resume reviews and mock interviews, helping aspiring software engineers successfully break into the tech industry.</li>
+                </ul>
+              </div>
+            </section>
 
             {/* Education & Academic Section */}
             <section id="education" style={{ display: 'flex', flexDirection: 'column', gap: '32px' }}>
