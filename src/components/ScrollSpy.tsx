@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from 'react';
 
 const sections = [
-  { id: 'hero', label: 'Home' },
-  { id: 'skills', label: 'Skills' },
   { id: 'experience', label: 'Experience' },
+  { id: 'skills', label: 'Skills' },
   { id: 'projects', label: 'Projects' },
+  { id: 'certifications', label: 'Certifications' },
   { id: 'testimonials', label: 'Testimonials' },
-  { id: 'education', label: 'Education' }
+  { id: 'education', label: 'Education' },
+  { id: 'contact', label: 'Contact' },
 ];
 
 export const ScrollSpy: React.FC = () => {
