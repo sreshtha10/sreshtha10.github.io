@@ -2,51 +2,31 @@ import { useState, useEffect, useRef } from 'react';
 import {
   Sun,
   Moon,
-  Code2,
-  Mail,
-  FileText,
-  Award,
-  Layers,
   Cpu,
+  Code2,
   Database,
+  Layers,
+  FileText,
+  Mail,
   Menu,
-  MessageSquareQuote,
+  X,
+  ArrowUpRight,
+  Award,
   Users,
-  X
+  MessageSquareQuote,
 } from 'lucide-react';
 
 import resumePdf from './assets/resume.pdf';
-import heroDp from './assets/hero_dp.png';
+import heroDp from './assets/hero.jpeg';
 import ciscoLogo from './assets/cisco.svg';
 
-// Import custom components
 import { CursorTrajectoryProvider } from './context/CursorTrajectoryContext';
 import { MagneticButton } from './components/MagneticButton';
-import { CanvasRain } from './components/CanvasRain';
-import { CanvasSunshine } from './components/CanvasSunshine';
-import { ThunderFlash } from './components/ThunderFlash';
-import { SunshineAmbient } from './components/SunshineAmbient';
-
 import { Testimonials } from './components/Testimonials';
+import { Certifications } from './components/Certifications';
 import { ScrollSpy } from './components/ScrollSpy';
 
-// Inline Custom SVG Logos representing organizations
-const ManipalLogo = ({ size = 24 }: { size?: number }) => (
-  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ display: 'inline-block', verticalAlign: 'middle' }}>
-    <path d="M12 2L2 7l10 5 10-5-10-5z" />
-    <path d="M2 17l10 5 10-5" />
-    <path d="M2 12l10 5 10-5" />
-  </svg>
-);
-
-const ArmySchoolLogo = ({ size = 24 }: { size?: number }) => (
-  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ display: 'inline-block', verticalAlign: 'middle' }}>
-    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
-    <line x1="12" y1="8" x2="12" y2="16" />
-    <line x1="9" y1="12" x2="15" y2="12" />
-  </svg>
-);
-
+// Inline SVG Icons
 const GithubIcon = ({ size = 18 }: { size?: number }) => (
   <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
     <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path>
@@ -61,1029 +41,595 @@ const LinkedinIcon = ({ size = 18 }: { size?: number }) => (
   </svg>
 );
 
-const SkillBadge = ({ text }: { text: string }) => (
-  <span
-    style={{
-      display: 'inline-block',
-      padding: '6px 12px',
-      borderRadius: '8px',
-      background: 'var(--card-bg)',
-      border: '1px solid var(--card-border)',
-      fontSize: '0.8rem',
-      fontWeight: 500,
-      color: 'var(--text-primary)',
-      boxShadow: '0 2px 8px rgba(0,0,0,0.02)'
-    }}
-  >
-    {text}
-  </span>
+const SkillTag = ({ text }: { text: string }) => (
+  <span className="skill-tag">{text}</span>
+);
+
+// Education SVG icons
+const ManipalLogo = ({ size = 20 }: { size?: number }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M12 2L2 7l10 5 10-5-10-5z" />
+    <path d="M2 17l10 5 10-5" />
+    <path d="M2 12l10 5 10-5" />
+  </svg>
+);
+
+const ArmySchoolLogo = ({ size = 20 }: { size?: number }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+  </svg>
 );
 
 function App() {
-  const [theme, setTheme] = useState<'sunny' | 'noir'>('sunny');
-  // Rain is for Noir theme, Sunshine is for Sunny theme
-  const [rainState, setRainState] = useState<'active' | 'fading' | 'stopped'>('stopped');
-  // Track sunshine animation (intro fade effect)
-  const [sunshineState, setSunshineState] = useState<'active' | 'fading' | 'stopped'>('active');
-  // Mobile menu control state
+  const [theme, setTheme] = useState<'light' | 'dark'>('light');
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  // Track previous theme to determine transition direction
-  const prevThemeRef = useRef<'sunny' | 'noir'>(theme);
+  const [activeSkillFilter, setActiveSkillFilter] = useState('all');
 
-  // Sync theme changes with DOM node attributes for styling selectors
+  // Scroll reveal
+  const revealRefs = useRef<HTMLElement[]>([]);
+
   useEffect(() => {
     document.documentElement.setAttribute('data-theme', theme);
-    document.body.setAttribute('data-theme', theme);
-
-    // Rain only triggers when switching TO noir, or on initial noir load
-    const isInitialLoad = prevThemeRef.current === theme;
-    const isSwitchingToNoir = prevThemeRef.current === 'sunny' && theme === 'noir';
-    const isSwitchingToSunny = prevThemeRef.current === 'noir' && theme === 'sunny';
-
-    if ((theme === 'noir' && isInitialLoad) || isSwitchingToNoir) {
-      setRainState('active');
-      setSunshineState('stopped');
-    }
-
-    if (isSwitchingToSunny) {
-      setSunshineState('active');
-      setRainState('stopped');
-    }
-
-    prevThemeRef.current = theme;
   }, [theme]);
 
-  // Rain sequence timers: 2.5s active rain, then 1.5s fading
+  // IntersectionObserver for scroll reveal
   useEffect(() => {
-    if (rainState !== 'active') return;
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('visible');
+          }
+        });
+      },
+      { threshold: 0.1, rootMargin: '0px 0px -40px 0px' }
+    );
 
-    const fadeTimer = setTimeout(() => {
-      setRainState('fading');
-    }, 2500);
+    revealRefs.current.forEach((el) => {
+      if (el) observer.observe(el);
+    });
 
-    const stopTimer = setTimeout(() => {
-      setRainState('stopped');
-    }, 4000);
+    return () => observer.disconnect();
+  }, []);
 
-    return () => {
-      clearTimeout(fadeTimer);
-      clearTimeout(stopTimer);
-    };
-  }, [rainState]);
-
-  // Sunshine intro: 3s active, then 1.5s fading
-  useEffect(() => {
-    if (sunshineState !== 'active') return;
-
-    const fadeTimer = setTimeout(() => {
-      setSunshineState('fading');
-    }, 3000);
-
-    const stopTimer = setTimeout(() => {
-      setSunshineState('stopped');
-    }, 4500);
-
-    return () => {
-      clearTimeout(fadeTimer);
-      clearTimeout(stopTimer);
-    };
-  }, [sunshineState]);
+  const addRevealRef = (el: HTMLElement | null) => {
+    if (el && !revealRefs.current.includes(el)) {
+      revealRefs.current.push(el);
+    }
+  };
 
   const toggleTheme = () => {
-    setTheme((prev) => (prev === 'sunny' ? 'noir' : 'sunny'));
+    setTheme((prev) => (prev === 'light' ? 'dark' : 'light'));
   };
 
   const skillCategories = [
     {
       id: 'ai',
-      title: 'AI & Machine Learning',
-      icon: <Cpu size={18} style={{ color: 'var(--accent)' }} />,
-      description: 'Developing LLM agents, dynamic orchestrations, and context architectures.',
-      skills: ['LangChain', 'LangGraph', 'LangSmith', 'MCP', 'OpenAI APIs', 'A2A', 'Model Inference']
+      title: 'AI & ML Systems',
+      icon: <Cpu size={18} />,
+      description: 'LLM agents, orchestration pipelines, and predictive analytics.',
+      skills: ['LangChain', 'LangGraph', 'LangSmith', 'MCP', 'OpenAI APIs', 'A2A', 'Model Inference'],
     },
     {
       id: 'fullstack',
-      title: 'Full Stack Architecture',
-      icon: <Code2 size={18} style={{ color: 'var(--accent)' }} />,
-      description: 'Architecting distributed APIs, database schemas, and responsive client structures.',
-      skills: ['Python', 'FastAPI', 'Java', 'Spring Boot', 'Node.js', 'React', 'TypeScript', 'JavaScript']
+      title: 'Full Stack',
+      icon: <Code2 size={18} />,
+      description: 'Distributed APIs, database schemas, and responsive clients.',
+      skills: ['Python', 'FastAPI', 'Java', 'Spring Boot', 'Node.js', 'React', 'TypeScript', 'JavaScript'],
     },
     {
       id: 'data',
       title: 'Data & Observability',
-      icon: <Database size={18} style={{ color: 'var(--accent)' }} />,
-      description: 'Building scalable telemetry, real-time search platforms, and high-volume data layers.',
-      skills: ['ElasticSearch', 'OpenSearch', 'Postgres', 'MongoDB', 'Kafka', 'Redis', 'Splunk', 'Grafana', 'Kibana']
+      icon: <Database size={18} />,
+      description: 'Scalable telemetry, search platforms, and data pipelines.',
+      skills: ['ElasticSearch', 'OpenSearch', 'Postgres', 'MongoDB', 'Kafka', 'Redis', 'Splunk', 'Grafana', 'Kibana'],
     },
     {
       id: 'cloud',
       title: 'Cloud & Infrastructure',
-      icon: <Layers size={18} style={{ color: 'var(--accent)' }} />,
-      description: 'Automating deployment pipelines, container orchestration, and environment configuration.',
-      skills: ['Docker', 'Kubernetes', 'Jenkins', 'Linux', 'Nginx', 'Ansible', 'Git', 'CCNA']
-    }
+      icon: <Layers size={18} />,
+      description: 'Container orchestration, CI/CD pipelines, and config management.',
+      skills: ['Docker', 'Kubernetes', 'Jenkins', 'Linux', 'Nginx', 'Ansible', 'Git', 'CCNA'],
+    },
   ];
 
-
+  const filteredSkills = activeSkillFilter === 'all'
+    ? skillCategories
+    : skillCategories.filter((c) => c.id === activeSkillFilter);
 
   return (
     <CursorTrajectoryProvider>
-      {/* Background Canvas weather animation: Renders during active/fading states on load or theme switch */}
-      {rainState !== 'stopped' && (
-        <CanvasRain isFading={rainState === 'fading'} />
-      )}
-
-      {/* Thunder effect triggers only during Noir theme switch (when rain is active) */}
-      {theme === 'noir' && rainState !== 'stopped' && (
-        <ThunderFlash />
-      )}
-
-      {/* Sunny intro ambient effect */}
-      {sunshineState !== 'stopped' && (
-        <CanvasSunshine isFading={sunshineState === 'fading'} />
-      )}
-
-      {/* Persistent sunny ambient effect (like ThunderFlash for noir) */}
-      {theme === 'sunny' && sunshineState === 'stopped' && (
-        <SunshineAmbient />
-      )}
-
-      {/* Floating Scrollspy Navigation */}
       <ScrollSpy />
 
       <div className="app-container">
-        {/* Core Layout filter wrapper */}
-        <div className="noir-layout-wrapper" style={{ display: 'flex', flexDirection: 'column', flex: 1, width: '100%' }}>
+        {/* Navigation — Floating Pill */}
+        <header className="nav-header">
+          <div className="nav-inner">
+            <a href="#" className="nav-brand">Sreshtha Mehrotra</a>
 
-          {/* Global Header Navigation */}
-          <header
-            style={{
-              borderBottom: '1px solid var(--card-border)',
-              backgroundColor: 'var(--card-bg)',
-              backdropFilter: 'blur(12px)',
-              WebkitBackdropFilter: 'blur(12px)',
-              position: 'sticky',
-              top: 0,
-              zIndex: 40,
-            }}
-          >
-            <div
-              className="content-container"
-              style={{
-                height: '72px',
-                flexDirection: 'row',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-              }}
-            >
-              {/* Creative Minimal SaaS logo */}
-              <a
-                href="#"
-                style={{
-                  fontFamily: 'var(--font-sans)',
-                  fontSize: '1.1rem',
-                  fontWeight: 800,
-                  letterSpacing: '0.2em',
-                  textTransform: 'uppercase',
-                  textDecoration: 'none',
-                  color: 'var(--text-primary)',
-                  lineHeight: 1
-                }}
-              >
-                Sreshtha.
+            <nav className="nav-pill">
+              <a href="#experience">Experience</a>
+              <a href="#skills">Skills</a>
+              <a href="#projects">Projects</a>
+              <a href="#certifications">Certifications</a>
+              <a href="#contact">Contact</a>
+            </nav>
+
+            <div className="nav-actions">
+              <a href="https://github.com/sreshtha10" target="_blank" rel="noreferrer" aria-label="GitHub">
+                <GithubIcon size={17} />
               </a>
-
-              {/* Navigation Links (Desktop) */}
-              <nav className="desktop-nav">
-                <a
-                  href="#skills"
-                  style={{ textDecoration: 'none', color: 'var(--text-secondary)', fontSize: '0.85rem', fontWeight: 600 }}
-                  onMouseEnter={(e) => e.currentTarget.style.color = 'var(--text-primary)'}
-                  onMouseLeave={(e) => e.currentTarget.style.color = 'var(--text-secondary)'}
-                >
-                  Skills
-                </a>
-                <a
-                  href="#experience"
-                  style={{ textDecoration: 'none', color: 'var(--text-secondary)', fontSize: '0.85rem', fontWeight: 600 }}
-                  onMouseEnter={(e) => e.currentTarget.style.color = 'var(--text-primary)'}
-                  onMouseLeave={(e) => e.currentTarget.style.color = 'var(--text-secondary)'}
-                >
-                  Experience
-                </a>
-                <a
-                  href="#projects"
-                  style={{ textDecoration: 'none', color: 'var(--text-secondary)', fontSize: '0.85rem', fontWeight: 600 }}
-                  onMouseEnter={(e) => e.currentTarget.style.color = 'var(--text-primary)'}
-                  onMouseLeave={(e) => e.currentTarget.style.color = 'var(--text-secondary)'}
-                >
-                  Projects
-                </a>
-                <a
-                  href="#mentorship"
-                  style={{ textDecoration: 'none', color: 'var(--text-secondary)', fontSize: '0.85rem', fontWeight: 600 }}
-                  onMouseEnter={(e) => e.currentTarget.style.color = 'var(--text-primary)'}
-                  onMouseLeave={(e) => e.currentTarget.style.color = 'var(--text-secondary)'}
-                >
-                  Mentorship
-                </a>
-                <a
-                  href="#education"
-                  style={{ textDecoration: 'none', color: 'var(--text-secondary)', fontSize: '0.85rem', fontWeight: 600 }}
-                  onMouseEnter={(e) => e.currentTarget.style.color = 'var(--text-primary)'}
-                  onMouseLeave={(e) => e.currentTarget.style.color = 'var(--text-secondary)'}
-                >
-                  Education
-                </a>
-                <a
-                  href="#testimonials"
-                  style={{ textDecoration: 'none', color: 'var(--text-secondary)', fontSize: '0.85rem', fontWeight: 600 }}
-                  onMouseEnter={(e) => e.currentTarget.style.color = 'var(--text-primary)'}
-                  onMouseLeave={(e) => e.currentTarget.style.color = 'var(--text-secondary)'}
-                >
-                  Testimonials
-                </a>
-
-                <div style={{ width: '1px', height: '20px', background: 'var(--card-border)', margin: '0 8px' }} />
-
-                {/* Social Icons & Theme Toggles */}
-                <div style={{ display: 'flex', gap: '12px', alignItems: 'center', marginRight: '8px' }}>
-                  <a
-                    href="https://github.com/sreshtha10"
-                    target="_blank"
-                    rel="noreferrer"
-                    style={{ color: 'var(--text-secondary)', display: 'flex', alignItems: 'center', transition: 'color 0.2s' }}
-                    onMouseEnter={(e) => e.currentTarget.style.color = 'var(--text-primary)'}
-                    onMouseLeave={(e) => e.currentTarget.style.color = 'var(--text-secondary)'}
-                    aria-label="GitHub Profile"
-                  >
-                    <GithubIcon size={18} />
-                  </a>
-                  <a
-                    href="https://linkedin.com/in/sreshtha-mehrotra"
-                    target="_blank"
-                    rel="noreferrer"
-                    style={{ color: 'var(--text-secondary)', display: 'flex', alignItems: 'center', transition: 'color 0.2s' }}
-                    onMouseEnter={(e) => e.currentTarget.style.color = 'var(--text-primary)'}
-                    onMouseLeave={(e) => e.currentTarget.style.color = 'var(--text-secondary)'}
-                    aria-label="LinkedIn Profile"
-                  >
-                    <LinkedinIcon size={18} />
-                  </a>
-                </div>
-
-                {/* Theme Switcher Toggle */}
-                <button
-                  onClick={toggleTheme}
-                  style={{
-                    background: 'var(--card-bg)',
-                    border: '1px solid var(--card-border)',
-                    borderRadius: '50%',
-                    padding: '8px',
-                    cursor: 'pointer',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    boxShadow: 'var(--card-shadow)',
-                    transition: 'all 0.3s ease',
-                  }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.transform = 'scale(1.1)';
-                    e.currentTarget.style.borderColor = 'var(--text-primary)';
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.transform = 'scale(1)';
-                    e.currentTarget.style.borderColor = 'var(--card-border)';
-                  }}
-                >
-                  {theme === 'sunny' ? (
-                    <Sun size={18} strokeWidth={2} style={{ color: 'var(--accent)' }} />
-                  ) : (
-                    <Moon size={18} style={{ color: '#E0E0E0' }} />
-                  )}
-                </button>
-              </nav>
-
-              {/* Hamburger Menu Toggle (Mobile) */}
-              <button
-                className="mobile-nav-toggle"
-                onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-                aria-label="Toggle Menu"
-              >
-                {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
+              <a href="https://linkedin.com/in/sreshtha-mehrotra" target="_blank" rel="noreferrer" aria-label="LinkedIn">
+                <LinkedinIcon size={17} />
+              </a>
+              <button className="theme-toggle" onClick={toggleTheme} aria-label="Toggle theme">
+                {theme === 'light' ? <Sun size={15} /> : <Moon size={15} />}
               </button>
             </div>
 
-            {/* Mobile Navigation Dropdown Drawer */}
-            {mobileMenuOpen && (
-              <div className="mobile-menu-overlay">
-                <a
-                  href="#skills"
-                  style={{ textDecoration: 'none', color: 'var(--text-primary)', fontSize: '1.2rem', fontWeight: 700 }}
-                  onClick={() => setMobileMenuOpen(false)}
-                >
-                  Skills
-                </a>
-                <a
-                  href="#experience"
-                  style={{ textDecoration: 'none', color: 'var(--text-primary)', fontSize: '1.2rem', fontWeight: 700 }}
-                  onClick={() => setMobileMenuOpen(false)}
-                >
-                  Experience
-                </a>
-                <a
-                  href="#projects"
-                  style={{ textDecoration: 'none', color: 'var(--text-primary)', fontSize: '1.2rem', fontWeight: 700 }}
-                  onClick={() => setMobileMenuOpen(false)}
-                >
-                  Projects
-                </a>
-                <a
-                  href="#testimonials"
-                  style={{ textDecoration: 'none', color: 'var(--text-primary)', fontSize: '1.2rem', fontWeight: 700 }}
-                  onClick={() => setMobileMenuOpen(false)}
-                >
-                  Testimonials
-                </a>
-                <a
-                  href="#education"
-                  style={{ textDecoration: 'none', color: 'var(--text-primary)', fontSize: '1.2rem', fontWeight: 700 }}
-                  onClick={() => setMobileMenuOpen(false)}
-                >
-                  Education
-                </a>
+            {/* Mobile hamburger */}
+            <button className="mobile-nav-toggle" onClick={() => setMobileMenuOpen(!mobileMenuOpen)} aria-label="Toggle Menu">
+              {mobileMenuOpen ? <X size={22} /> : <Menu size={22} />}
+            </button>
+          </div>
+        </header>
 
-                {/* Theme Switcher in Mobile Drawer */}
-                <button
-                  onClick={() => {
-                    toggleTheme();
-                    setMobileMenuOpen(false);
-                  }}
-                  style={{
-                    background: 'var(--card-bg)',
-                    border: '1px solid var(--card-border)',
-                    borderRadius: '50%',
-                    padding: '12px',
-                    cursor: 'pointer',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    boxShadow: 'var(--card-shadow)',
-                    marginTop: '16px'
-                  }}
-                >
-                  {theme === 'sunny' ? (
-                    <Sun size={20} strokeWidth={2} style={{ color: 'var(--accent)' }} />
-                  ) : (
-                    <Moon size={20} style={{ color: '#E0E0E0' }} />
-                  )}
-                </button>
-              </div>
-            )}
-          </header>
+        {/* Mobile menu overlay */}
+        {mobileMenuOpen && (
+          <div className="mobile-menu-overlay">
+            <a href="#experience" onClick={() => setMobileMenuOpen(false)}>Experience</a>
+            <a href="#skills" onClick={() => setMobileMenuOpen(false)}>Skills</a>
+            <a href="#projects" onClick={() => setMobileMenuOpen(false)}>Projects</a>
+            <a href="#certifications" onClick={() => setMobileMenuOpen(false)}>Certifications</a>
+            <a href="#contact" onClick={() => setMobileMenuOpen(false)}>Contact</a>
+            <button className="theme-toggle" onClick={() => { toggleTheme(); setMobileMenuOpen(false); }} style={{ marginTop: '8px' }}>
+              {theme === 'light' ? <Sun size={18} /> : <Moon size={18} />}
+            </button>
+          </div>
+        )}
 
-          {/* Main Portfolio Sections */}
-          <main className="content-container" style={{ gap: '96px', paddingBottom: '120px', paddingTop: '48px' }}>
+        <main className="content-container">
 
-            {/* Hero Greeting Section */}
-            <section
-              style={{
-                alignItems: 'center',
-              }}
-              className="hero-grid"
-            >
-              <div>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginBottom: '24px' }}>
-                  <span style={{
-                    fontSize: '1rem',
-                    color: 'var(--text-secondary)',
-                    letterSpacing: '0.1em',
-                    textTransform: 'uppercase',
-                    fontWeight: 600
-                  }}>
-                    Software Engineer II @ Cisco
-                  </span>
-                </div>
+          {/* ============================================
+              Hero Section — Felipe style + Cindy smiley
+              ============================================ */}
+          <section className="hero-section">
+            <div className="hero-smiley">·͜·</div>
 
-                <h1 className="hero-heading" style={{ marginBottom: '16px', letterSpacing: '-0.02em', display: 'flex', flexDirection: 'column', gap: '12px' }}>
-                  <span style={{ fontSize: '2.5rem' }}>Hi, I'm</span>
-                  <span style={{
-                    fontFamily: 'var(--font-signature)',
-                    fontSize: 'clamp(4rem, 8vw, 6rem)',
-                    color: 'var(--accent)',
-                    lineHeight: '1.1',
-                    fontWeight: 'normal',
-                    textShadow: '0 4px 20px rgba(0,0,0,0.05)'
-                  }}>Sreshtha Mehrotra</span>
-                </h1>
+            <div className="hero-photo-wrapper">
+              <img
+                className="hero-photo"
+                src={heroDp}
+                alt="Sreshtha Mehrotra"
+              />
+            </div>
 
-                <p
-                  style={{
-                    fontSize: '1.4rem',
-                    fontWeight: 500,
-                    color: 'var(--text-primary)',
-                    marginBottom: '16px',
-                  }}
-                >
-                  I design and engineer intelligent microservices.
-                </p>
+            <h1 className="hero-statement">
+              <span className="light">I build scalable systems</span>
+              <br />
+              <span className="bold">that power observability at scale.</span>
+            </h1>
 
-                <p
-                  style={{
-                    fontSize: '1.05rem',
-                    color: 'var(--text-secondary)',
-                    marginBottom: '40px',
-                    maxWidth: '600px',
-                    lineHeight: '1.7'
-                  }}
-                >
-                  Specializing in system observability, high-performance microservices, and AI-driven telemetry. Focused on architecting scalable backend systems, driving zero-downtime deployments, and elevating developer infrastructure for enterprise-scale platforms.
-                </p>
+            <div className="hero-role">
+              Software Engineer II · currently at
+              <span className="cisco-badge">
+                <img src={ciscoLogo} alt="Cisco" />
+                Cisco
+              </span>
+            </div>
 
-                {/* Call-to-Action Buttons */}
-                <div style={{ display: 'flex', gap: '16px', flexWrap: 'wrap', justifyContent: 'inherit' }}>
-                  <MagneticButton
-                    id="btn-download-cv"
-                    variant="primary"
-                    style={{ padding: '14px 32px' }}
-                    href={resumePdf}
-                    target="_blank"
-                    download="Sreshtha_Mehrotra_Resume.pdf"
-                  >
-                    <FileText size={16} />
-                    <span>Download CV</span>
-                  </MagneticButton>
-                  <MagneticButton
-                    id="btn-contact-me"
-                    variant="secondary"
-                    style={{ padding: '14px 32px' }}
-                    href="mailto:sreshtha.mehrotra@gmail.com"
-                  >
-                    <Mail size={16} />
-                    <span>Contact Me</span>
-                  </MagneticButton>
-                </div>
-              </div>
-
-              {/* Graphical Avatar Card (Zoom image on hover) */}
-              <div
-                style={{
-                  display: 'flex',
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                  position: 'relative'
-                }}
+            <div className="hero-buttons">
+              <MagneticButton
+                id="btn-resume"
+                variant="primary"
+                href={resumePdf}
+                target="_blank"
+                download="Sreshtha_Mehrotra_Resume.pdf"
               >
-                <div
-                  style={{
-                    width: '360px',
-                    height: '360px',
-                    borderRadius: '50%',
-                    display: 'flex',
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                    position: 'relative',
-                    overflow: 'hidden',
-                    background: 'var(--card-bg)',
-                    boxShadow: '0 20px 60px -15px rgba(0,0,0,0.1)'
-                  }}
-                >
-                  <img
-                    src={heroDp}
-                    alt="Sreshtha Mehrotra Profile"
-                    style={{
-                      width: '100%',
-                      height: '100%',
-                      objectFit: 'cover',
-                      transition: 'transform 0.6s cubic-bezier(0.16, 1, 0.3, 1)'
-                    }}
-                    onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.08)'}
-                    onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'}
-                  />
-                </div>
+                <FileText size={15} />
+                <span>Resume</span>
+              </MagneticButton>
+              <MagneticButton
+                id="btn-contact"
+                variant="secondary"
+                href="mailto:sreshtha.mehrotra@gmail.com"
+              >
+                <Mail size={15} />
+                <span>Contact</span>
+              </MagneticButton>
+            </div>
+
+            <div className="hero-metrics">
+              <div className="hero-metric">
+                <div className="number">3+</div>
+                <div className="label">Years at Cisco</div>
               </div>
-            </section>
-
-            {/* Technical Skills Section: Modern Bento Grid */}
-            <section id="skills" style={{ display: 'flex', flexDirection: 'column', gap: '32px' }}>
-              <div style={{ borderBottom: '1px solid var(--card-border)', paddingBottom: '16px' }}>
-                <h2 style={{ fontSize: '1.8rem', fontWeight: 700 }}>Technical Expertise</h2>
-                <p style={{ color: 'var(--text-secondary)' }}>Core technology architectures, frameworks, and programming competencies.</p>
+              <div className="hero-metric">
+                <div className="number">25</div>
+                <div className="label">Certifications</div>
               </div>
-
-              <div className="bento-grid">
-                {/* Tile 1: AI & ML Systems (Large) */}
-                <div className="bento-card bento-item-ai">
-                  <div style={{ position: 'absolute', top: '-10%', right: '-10%', opacity: 0.05, transform: 'scale(1.5)' }}>
-                    <Cpu size={240} />
-                  </div>
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', zIndex: 1 }}>
-                    <div style={{ color: 'var(--text-primary)', display: 'flex', alignItems: 'center', gap: '10px' }}>
-                      <Cpu size={24} style={{ color: 'var(--accent)' }} />
-                      <h3 style={{ fontSize: '1.4rem', fontWeight: 700 }}>AI & ML Systems</h3>
-                    </div>
-                    <p style={{ fontSize: '0.95rem', color: 'var(--text-secondary)', lineHeight: '1.6', maxWidth: '85%' }}>
-                      Developing LLM agents, dynamic orchestrations, and context architectures. Building robust pipelines for machine learning models and predictive analytics.
-                    </p>
-                  </div>
-                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', zIndex: 1 }}>
-                    {skillCategories.find(c => c.id === 'ai')?.skills.map((skill, sIdx) => (
-                      <SkillBadge key={sIdx} text={skill} />
-                    ))}
-                  </div>
-                </div>
-
-                {/* Tile 2: Backend & Microservices (Wide) */}
-                <div className="bento-card bento-item-backend">
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', zIndex: 1 }}>
-                    <div style={{ color: 'var(--text-primary)', display: 'flex', alignItems: 'center', gap: '10px' }}>
-                      <Code2 size={20} style={{ color: 'var(--accent)' }} />
-                      <h3 style={{ fontSize: '1.2rem', fontWeight: 700 }}>Full Stack Architecture</h3>
-                    </div>
-                    <p style={{ fontSize: '0.9rem', color: 'var(--text-secondary)', lineHeight: '1.5' }}>
-                      Architecting distributed APIs, database schemas, and responsive client structures.
-                    </p>
-                  </div>
-                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', zIndex: 1 }}>
-                    {skillCategories.find(c => c.id === 'fullstack')?.skills.map((skill, sIdx) => (
-                      <SkillBadge key={sIdx} text={skill} />
-                    ))}
-                  </div>
-                </div>
-
-                {/* Tile 3: Data & Observability (Square) */}
-                <div className="bento-card bento-item-frontend">
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', zIndex: 1 }}>
-                    <div style={{ color: 'var(--text-primary)', display: 'flex', alignItems: 'center', gap: '10px' }}>
-                      <Database size={20} style={{ color: 'var(--accent)' }} />
-                      <h3 style={{ fontSize: '1.1rem', fontWeight: 700 }}>Data & Observability</h3>
-                    </div>
-                  </div>
-                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', zIndex: 1, marginTop: 'auto' }}>
-                    {skillCategories.find(c => c.id === 'data')?.skills.map((skill, sIdx) => (
-                      <SkillBadge key={sIdx} text={skill} />
-                    ))}
-                  </div>
-                </div>
-
-                {/* Tile 4: Cloud & Infra (Square) */}
-                <div className="bento-card bento-item-devops">
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', zIndex: 1 }}>
-                    <div style={{ color: 'var(--text-primary)', display: 'flex', alignItems: 'center', gap: '10px' }}>
-                      <Layers size={20} style={{ color: 'var(--accent)' }} />
-                      <h3 style={{ fontSize: '1.1rem', fontWeight: 700 }}>Cloud & Infra</h3>
-                    </div>
-                  </div>
-                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', zIndex: 1, marginTop: 'auto' }}>
-                    {skillCategories.find(c => c.id === 'cloud')?.skills.map((skill, sIdx) => (
-                      <SkillBadge key={sIdx} text={skill} />
-                    ))}
-                  </div>
-                </div>
+              <div className="hero-metric">
+                <div className="number">10K+</div>
+                <div className="label">Users Served</div>
               </div>
-            </section>
-
-            {/* Career Timeline Section */}
-            <section id="experience" style={{ display: 'flex', flexDirection: 'column', gap: '32px' }}>
-              <div style={{ borderBottom: '1px solid var(--card-border)', paddingBottom: '16px' }}>
-                <h2 style={{ fontSize: '1.8rem', fontWeight: 700 }}>Career History</h2>
-                <p style={{ color: 'var(--text-secondary)' }}>Work progression and key engineering milestones.</p>
+              <div className="hero-metric">
+                <div className="number">9.7</div>
+                <div className="label">CGPA</div>
               </div>
+            </div>
+          </section>
 
-              {/* Unified Cisco Systems Timeline card */}
-              <div className="glass-panel" style={{ width: '100%', padding: '32px' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '36px', flexWrap: 'wrap' }}>
-                  <div style={{
-                    background: '#18181B',
-                    color: 'var(--bg-solid)',
-                    padding: '8px 12px',
-                    borderRadius: '12px',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    height: '48px',
-                    width: '64px'
-                  }}>
-                    <img src={ciscoLogo} alt="Cisco Logo" style={{ width: '100%', height: '100%', objectFit: 'contain', filter: 'brightness(0) invert(1)' }} />
-                  </div>
-                  <div>
-                    <h3 style={{ fontSize: '1.5rem', fontWeight: 700 }}>Cisco Systems</h3>
-                    <div style={{ fontSize: '0.9rem', color: 'var(--text-secondary)', fontWeight: 500 }}>
-                      Software Engineering Progression • Aug 2023 - Present
-                    </div>
-                  </div>
-                </div>
+          <hr className="section-divider" />
 
-                {/* Timeline Container */}
-                <div style={{ position: 'relative', paddingLeft: '24px', display: 'flex', flexDirection: 'column', gap: '40px' }}>
-                  {/* Vertical Timeline Line */}
-                  <div style={{
-                    position: 'absolute',
-                    left: '7px',
-                    top: '8px',
-                    bottom: '8px',
-                    width: '2px',
-                    background: 'linear-gradient(to bottom, var(--accent) 0%, var(--accent-secondary) 100%)',
-                    borderRadius: '1px'
-                  }} />
+          {/* ============================================
+              Experience
+              ============================================ */}
+          <section id="experience" className="section reveal" ref={addRevealRef}>
+            <div className="section-header">
+              <div className="section-label">Career</div>
+              <h2 className="section-title">Experience</h2>
+            </div>
 
-                  {/* Milestone 1: SE2 */}
-                  <div style={{ position: 'relative' }}>
-                    <div style={{
-                      position: 'absolute',
-                      left: '-24px',
-                      top: '4px',
-                      width: '16px',
-                      height: '16px',
-                      borderRadius: '50%',
-                      background: 'var(--bg-solid)',
-                      border: '3.5px solid var(--accent)',
-                      boxShadow: '0 0 10px var(--accent)'
-                    }} />
-
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '8px', marginBottom: '10px' }}>
-                      <h4 style={{ fontSize: '1.25rem', fontWeight: 700, color: 'var(--text-primary)' }}>Software Engineer 2</h4>
-                      <span style={{ fontSize: '0.8rem', background: 'var(--card-border)', padding: '4px 12px', borderRadius: '9999px', fontWeight: 600, color: 'var(--text-primary)' }}>
-                        Sept 2025 - Present
-                      </span>
-                    </div>
-                    <ul style={{ paddingLeft: '20px', display: 'flex', flexDirection: 'column', gap: '6px', fontSize: '0.92rem', color: 'var(--text-secondary)', lineHeight: '1.6' }}>
-                      <li>Owned the design and implementation of an intelligent infrastructure observability platform enabling natural language queries, providing real-time telemetry integration for enterprise health status.</li>
-                      <li>Architected a predictive analytics ML pipeline forecasting incident risks and future alerts based on deployment data, directly improving change success rates by 25%.</li>
-                      <li>Engineered scalable FastAPI microservices managing full-stack deployment state efficiency, gracefully supporting 10,000+ concurrent users with 99.9% guaranteed uptime.</li>
-                    </ul>
-                  </div>
-
-                  {/* Milestone 2: SE */}
-                  <div style={{ position: 'relative' }}>
-                    <div style={{
-                      position: 'absolute',
-                      left: '-24px',
-                      top: '4px',
-                      width: '16px',
-                      height: '16px',
-                      borderRadius: '50%',
-                      background: 'var(--bg-solid)',
-                      border: '3.5px solid var(--accent-secondary)',
-                      boxShadow: '0 0 10px var(--accent-secondary)'
-                    }} />
-
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '8px', marginBottom: '10px' }}>
-                      <h4 style={{ fontSize: '1.25rem', fontWeight: 700, color: 'var(--text-primary)' }}>Software Engineer</h4>
-                      <span style={{ fontSize: '0.8rem', background: 'var(--card-border)', padding: '4px 12px', borderRadius: '9999px', fontWeight: 600, color: 'var(--text-primary)' }}>
-                        Sept 2024 - Aug 2025
-                      </span>
-                    </div>
-                    <ul style={{ paddingLeft: '20px', display: 'flex', flexDirection: 'column', gap: '6px', fontSize: '0.92rem', color: 'var(--text-secondary)', lineHeight: '1.6' }}>
-                      <li>Migrated and modularized a large-scale monolithic incident management UI to a highly available microservices architecture, streamlining deployment and enabling independent component scaling.</li>
-                      <li>Architected automated log management and strict RBAC on centralized systems, deploying Python/Ansible pipelines that boosted platform stability by 35%.</li>
-                      <li>Overhauled CI/CD workflows by implementing robust Jenkins and Docker pipelines, optimizing performance to reduce total deployment latency from 2 hours to 15 minutes.</li>
-                    </ul>
-                  </div>
-
-                  {/* Milestone 3: Consulting Engineer */}
-                  <div style={{ position: 'relative' }}>
-                    <div style={{
-                      position: 'absolute',
-                      left: '-24px',
-                      top: '4px',
-                      width: '16px',
-                      height: '16px',
-                      borderRadius: '50%',
-                      background: 'var(--bg-solid)',
-                      border: '3.5px solid var(--text-secondary)'
-                    }} />
-
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '8px', marginBottom: '10px' }}>
-                      <h4 style={{ fontSize: '1.25rem', fontWeight: 700, color: 'var(--text-primary)' }}>Consulting Engineer</h4>
-                      <span style={{ fontSize: '0.8rem', background: 'var(--card-border)', padding: '4px 12px', borderRadius: '9999px', fontWeight: 600, color: 'var(--text-primary)' }}>
-                        Aug 2023 - Aug 2024
-                      </span>
-                    </div>
-                    <ul style={{ paddingLeft: '20px', display: 'flex', flexDirection: 'column', gap: '6px', fontSize: '0.92rem', color: 'var(--text-secondary)', lineHeight: '1.6' }}>
-                      <li>Automated hardware device migrations using Python and Ansible playbooks integrated with system architectures, eliminating 75% of manual steps and reducing delivery time by 40%.</li>
-                      <li>Built full-stack Resource Allocation Manager web application using React, FastAPI, and MongoDB, aligning 100+ engineers with projects.</li>
-                      <li>Designed and implemented RESTful APIs serving 500+ daily requests with average response time under 200ms, incorporating unit testing and version control best practices.</li>
-                    </ul>
-                  </div>
-                </div>
+            {/* Cisco */}
+            <div className="experience-company">
+              <div className="company-logo">
+                <img src={ciscoLogo} alt="Cisco" />
               </div>
-            </section>
-
-            {/* Featured Projects Section */}
-            <section id="projects" style={{ display: 'flex', flexDirection: 'column', gap: '32px' }}>
-              <div style={{ borderBottom: '1px solid var(--card-border)', paddingBottom: '16px' }}>
-                <h2 style={{ fontSize: '1.8rem', fontWeight: 700 }}>Featured Projects</h2>
-                <p style={{ color: 'var(--text-secondary)' }}>Showcasing intelligent automated code agents.</p>
+              <div className="company-info">
+                <h3>Cisco Systems</h3>
+                <div className="company-meta">Software Engineering Progression · Aug 2023 – Present</div>
               </div>
+            </div>
 
-              {/* Project Card: FIRE */}
-              <div className="glass-panel" style={{ display: 'flex', flexDirection: 'column', gap: '20px', padding: '32px' }}>
-                <div>
-                  <div style={{ display: 'inline-flex', background: 'rgba(13, 148, 136, 0.08)', border: '1px solid rgba(13, 148, 136, 0.2)', padding: '4px 12px', borderRadius: '9999px', color: 'var(--accent)', fontSize: '0.75rem', fontWeight: 600, marginBottom: '12px' }}>
-                    AI-powered agent
-                  </div>
-                  <h3 style={{ fontSize: '1.5rem', fontWeight: 700, marginBottom: '12px' }}>Fix and Review (FIRE)</h3>
-                  <p style={{ color: 'var(--text-secondary)', fontSize: '0.95rem', lineHeight: '1.6', maxWidth: '800px' }}>
-                    Developed an AI-powered code agent that automates reviews and generates corrective pull request proposals. Built a machine-learning review pipeline integrating static code analysis and runtime testing with model inference to detect issues, suggest optimizations, and generate review logs, reducing manual review times by 60%.
-                  </p>
+            <div className="timeline">
+              {/* SE2 */}
+              <div className="timeline-entry">
+                <div className="timeline-dot current" />
+                <div className="timeline-role-header">
+                  <h4 className="timeline-role-title">Software Engineer 2</h4>
+                  <span className="timeline-date">Sep 2025 – Present</span>
                 </div>
-
-                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', borderTop: '1px solid var(--card-border)', paddingTop: '16px', alignItems: 'center' }}>
-                  <SkillBadge text="Python" />
-                  <SkillBadge text="Machine Learning" />
-                  <SkillBadge text="GitHub API" />
-                  <SkillBadge text="FastAPI" />
-                </div>
-
-                {/* Embedded GitHub Link */}
-                <div style={{ marginTop: '8px' }}>
-                  <a
-                    href="https://github.com/sreshtha10/FIRE"
-                    target="_blank"
-                    rel="noreferrer"
-                    style={{
-                      display: 'inline-flex',
-                      alignItems: 'center',
-                      gap: '8px',
-                      textDecoration: 'none',
-                      color: 'var(--text-primary)',
-                      fontWeight: 600,
-                      fontSize: '0.85rem',
-                      border: '1px solid var(--card-border)',
-                      background: 'var(--card-bg)',
-                      padding: '8px 16px',
-                      borderRadius: '8px',
-                      transition: 'all 0.2s ease'
-                    }}
-                    onMouseEnter={(e) => {
-                      e.currentTarget.style.borderColor = 'var(--accent)';
-                      e.currentTarget.style.transform = 'translateY(-1px)';
-                    }}
-                    onMouseLeave={(e) => {
-                      e.currentTarget.style.borderColor = 'var(--card-border)';
-                      e.currentTarget.style.transform = 'translateY(0)';
-                    }}
-                  >
-                    <GithubIcon size={16} />
-                    <span>View Repository on GitHub</span>
-                  </a>
-                </div>
-              </div>
-
-              {/* Project Card: Blink */}
-              <div className="glass-panel" style={{ display: 'flex', flexDirection: 'column', gap: '20px', padding: '32px' }}>
-                <div>
-                  <div style={{ display: 'inline-flex', background: 'rgba(79, 70, 229, 0.08)', border: '1px solid rgba(79, 70, 229, 0.2)', padding: '4px 12px', borderRadius: '9999px', color: 'var(--accent)', fontSize: '0.75rem', fontWeight: 600, marginBottom: '12px' }}>
-                    macOS Native App
-                  </div>
-                  <h3 style={{ fontSize: '1.5rem', fontWeight: 700, marginBottom: '12px' }}>Blink</h3>
-                  <p style={{ color: 'var(--text-secondary)', fontSize: '0.95rem', lineHeight: '1.6', maxWidth: '800px' }}>
-                    A native macOS productivity application built with Swift and SwiftUI. Designed to streamline daily workflows with intelligent automation, keyboard-first navigation, and seamless system integration. Features a minimal, distraction-free interface optimized for developer efficiency.
-                  </p>
-                </div>
-
-                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', borderTop: '1px solid var(--card-border)', paddingTop: '16px', alignItems: 'center' }}>
-                  <SkillBadge text="Swift" />
-                  <SkillBadge text="SwiftUI" />
-                  <SkillBadge text="macOS" />
-                  <SkillBadge text="AppKit" />
-                </div>
-
-                {/* Embedded GitHub Link */}
-                <div style={{ marginTop: '8px' }}>
-                  <a
-                    href="https://github.com/sreshtha10/blink"
-                    target="_blank"
-                    rel="noreferrer"
-                    style={{
-                      display: 'inline-flex',
-                      alignItems: 'center',
-                      gap: '8px',
-                      textDecoration: 'none',
-                      color: 'var(--text-primary)',
-                      fontWeight: 600,
-                      fontSize: '0.85rem',
-                      border: '1px solid var(--card-border)',
-                      background: 'var(--card-bg)',
-                      padding: '8px 16px',
-                      borderRadius: '8px',
-                      transition: 'all 0.2s ease'
-                    }}
-                    onMouseEnter={(e) => {
-                      e.currentTarget.style.borderColor = 'var(--accent)';
-                      e.currentTarget.style.transform = 'translateY(-1px)';
-                    }}
-                    onMouseLeave={(e) => {
-                      e.currentTarget.style.borderColor = 'var(--card-border)';
-                      e.currentTarget.style.transform = 'translateY(0)';
-                    }}
-                  >
-                    <GithubIcon size={16} />
-                    <span>View Repository on GitHub</span>
-                  </a>
-                </div>
-              </div>
-            </section>
-
-            {/* Mentorship Section */}
-            <section id="mentorship" style={{ display: 'flex', flexDirection: 'column', gap: '32px' }}>
-              <div style={{ borderBottom: '1px solid var(--card-border)', paddingBottom: '16px' }}>
-                <h2 style={{ fontSize: '1.8rem', fontWeight: 700 }}>
-                  <span style={{ display: 'inline-flex', alignItems: 'center', gap: '12px' }}>
-                    <Users size={28} style={{ color: 'var(--accent)' }} />
-                    Leadership & Mentorship
-                  </span>
-                </h2>
-                <p style={{ color: 'var(--text-secondary)' }}>Elevating engineering standards and empowering the next generation.</p>
-              </div>
-
-              <div className="glass-panel" style={{ display: 'flex', flexDirection: 'column', gap: '20px', padding: '32px' }}>
-                <div style={{ display: 'flex', gap: '16px', alignItems: 'center' }}>
-                  <div style={{
-                    background: 'var(--text-primary)',
-                    color: 'var(--bg-solid)',
-                    padding: '10px',
-                    borderRadius: '12px',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    height: '48px',
-                    width: '48px',
-                    flexShrink: 0
-                  }}>
-                    <Users size={24} />
-                  </div>
-                  <div>
-                    <h3 style={{ fontSize: '1.5rem', fontWeight: 700 }}>Engineering Mentor</h3>
-                    <div style={{ fontSize: '0.9rem', color: 'var(--accent)', fontWeight: 600, marginTop: '4px' }}>
-                      Cisco Women In Tech & Peer Mentorship
-                    </div>
-                  </div>
-                </div>
-
-                <ul style={{ paddingLeft: '20px', display: 'flex', flexDirection: 'column', gap: '8px', fontSize: '0.95rem', color: 'var(--text-secondary)', lineHeight: '1.6', marginTop: '8px' }}>
-                  <li>Mentored junior engineers and university students as part of the <strong>Cisco Women In Tech</strong> program, guiding them through technical challenges, career progression, and architecture fundamentals.</li>
-                  <li>Led technical design reviews and established CI/CD best practices within the team, actively raising the engineering bar and ensuring highly resilient systems.</li>
-                  <li>Conducted numerous resume reviews and mock interviews, helping aspiring software engineers successfully break into the tech industry.</li>
+                <ul className="timeline-bullets">
+                  <li>Leading development of Cisco's Observability Agent with A2A integration and complex UI design. Creating supervisor agents and MCP servers for scalable backend services.</li>
+                  <li>Architected a predictive analytics ML pipeline forecasting incident risks, improving change success rates by 25%.</li>
+                  <li>Engineered scalable FastAPI microservices supporting 10,000+ concurrent users with 99.9% uptime.</li>
                 </ul>
               </div>
-            </section>
 
-            {/* Education & Academic Section */}
-            <section id="education" style={{ display: 'flex', flexDirection: 'column', gap: '32px' }}>
-              <div style={{ borderBottom: '1px solid var(--card-border)', paddingBottom: '16px' }}>
-                <h2 style={{ fontSize: '1.8rem', fontWeight: 700 }}>Education</h2>
-                <p style={{ color: 'var(--text-secondary)' }}>Academic achievements and merit records.</p>
+              {/* SE */}
+              <div className="timeline-entry">
+                <div className="timeline-dot" />
+                <div className="timeline-role-header">
+                  <h4 className="timeline-role-title">Software Engineer</h4>
+                  <span className="timeline-date">Sep 2024 – Sep 2025</span>
+                </div>
+                <ul className="timeline-bullets">
+                  <li>Developed core services for Cisco's Observability platform, enabling near real-time data processing and improved security with role-based access controls.</li>
+                  <li>Migrated monolithic incident management UI to microservices architecture, streamlining deployment.</li>
+                  <li>Overhauled CI/CD workflows — reduced deployment latency from 2 hours to 15 minutes.</li>
+                </ul>
               </div>
 
-              <div className="education-grid">
-                {/* Manipal University */}
-                <div className="glass-panel" style={{ display: 'flex', flexDirection: 'column', gap: '20px', justifyContent: 'space-between' }}>
-                  <div style={{ display: 'flex', gap: '16px' }}>
-                    <div style={{
-                      background: 'var(--text-primary)',
-                      color: 'var(--bg-solid)',
-                      padding: '10px',
-                      borderRadius: '12px',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      height: '44px',
-                      width: '44px',
-                      flexShrink: 0
-                    }}>
-                      <ManipalLogo size={22} />
-                    </div>
-                    <div>
-                      <h3 style={{ fontSize: '1.2rem', fontWeight: 700 }}>Manipal University Jaipur</h3>
-                      <div style={{ fontSize: '0.88rem', color: 'var(--text-secondary)', fontWeight: 500 }}>
-                        Bachelor of Technology in Computer Science Engineering
-                      </div>
-                      <div style={{ fontSize: '0.8rem', color: 'var(--accent)', fontWeight: 600, marginTop: '6px' }}>
-                        CGPA: 9.7 / 10
-                      </div>
-                    </div>
+              {/* Consulting Engineer */}
+              <div className="timeline-entry">
+                <div className="timeline-dot" />
+                <div className="timeline-role-header">
+                  <h4 className="timeline-role-title">Consulting Engineer</h4>
+                  <span className="timeline-date">Aug 2023 – Sep 2024</span>
+                </div>
+                <ul className="timeline-bullets">
+                  <li>Automated VoIP device migrations using Python and Ansible, eliminating 75% of manual steps.</li>
+                  <li>Built full-stack Resource Allocation Manager (React, FastAPI, MongoDB), aligning 100+ engineers.</li>
+                  <li>Designed RESTful APIs serving 500+ daily requests with &lt;200ms response time.</li>
+                </ul>
+              </div>
+
+              {/* Intern */}
+              <div className="timeline-entry">
+                <div className="timeline-dot" />
+                <div className="timeline-role-header">
+                  <h4 className="timeline-role-title">Technical Undergraduate Intern</h4>
+                  <span className="timeline-date">Jan 2023 – Aug 2023</span>
+                </div>
+                <ul className="timeline-bullets">
+                  <li>Built automation tools using Python and Django for network device management workflows.</li>
+                </ul>
+              </div>
+            </div>
+
+            {/* Earlier Roles */}
+            <div className="earlier-roles">
+              <h4>Earlier Roles</h4>
+              <div className="earlier-role-item">
+                <div className="earlier-role-info">
+                  <div className="earlier-role-title">Android Developer</div>
+                  <div className="earlier-role-company">Neoperk Technologies · Freelance</div>
+                </div>
+                <div className="earlier-role-date">Sep – Dec 2022</div>
+              </div>
+              <div className="earlier-role-item">
+                <div className="earlier-role-info">
+                  <div className="earlier-role-title">Software Engineer Intern</div>
+                  <div className="earlier-role-company">QuickGhy</div>
+                </div>
+                <div className="earlier-role-date">May – Aug 2022</div>
+              </div>
+              <div className="earlier-role-item">
+                <div className="earlier-role-info">
+                  <div className="earlier-role-title">Software Engineer Intern (Android)</div>
+                  <div className="earlier-role-company">Atom EI</div>
+                </div>
+                <div className="earlier-role-date">Jan 2022</div>
+              </div>
+              <div className="earlier-role-item">
+                <div className="earlier-role-info">
+                  <div className="earlier-role-title">Android Developer Intern</div>
+                  <div className="earlier-role-company">Neoperk Technologies</div>
+                </div>
+                <div className="earlier-role-date">Aug – Nov 2021</div>
+              </div>
+            </div>
+          </section>
+
+          <hr className="section-divider" />
+
+          {/* ============================================
+              Skills — Filter Pills + Cards
+              ============================================ */}
+          <section id="skills" className="section reveal" ref={addRevealRef}>
+            <div className="section-header">
+              <div className="section-label">Expertise</div>
+              <h2 className="section-title">Skills</h2>
+            </div>
+
+            <div className="skills-filters">
+              {[
+                { id: 'all', label: 'All' },
+                { id: 'ai', label: 'AI & ML' },
+                { id: 'fullstack', label: 'Full Stack' },
+                { id: 'data', label: 'Data' },
+                { id: 'cloud', label: 'Cloud' },
+              ].map((filter) => (
+                <button
+                  key={filter.id}
+                  className={`skill-filter-pill ${activeSkillFilter === filter.id ? 'active' : ''}`}
+                  onClick={() => setActiveSkillFilter(filter.id)}
+                >
+                  {filter.label}
+                </button>
+              ))}
+            </div>
+
+            <div className="skills-grid">
+              {filteredSkills.map((cat) => (
+                <div key={cat.id} className="card" style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                  <div className="skill-card-title">
+                    <span style={{ color: 'var(--text-secondary)' }}>{cat.icon}</span>
+                    <h3>{cat.title}</h3>
                   </div>
-                  <div style={{ borderTop: '1px solid var(--card-border)', paddingTop: '12px', fontSize: '0.85rem', color: 'var(--text-secondary)', display: 'flex', gap: '8px', alignItems: 'flex-start' }}>
-                    <Award size={16} style={{ color: 'var(--accent)', flexShrink: 0, marginTop: '2px' }} />
-                    <div>
-                      <strong>TMA Pai Merit Scholarship (2019 – 2023)</strong>
-                      <div style={{ marginTop: '2px' }}>Awarded for Academic Excellence for consistent high performance throughout the undergraduate program.</div>
-                    </div>
+                  <p className="skill-card-description">{cat.description}</p>
+                  <div className="skill-tags" style={{ marginTop: 'auto' }}>
+                    {cat.skills.map((skill, idx) => (
+                      <SkillTag key={idx} text={skill} />
+                    ))}
                   </div>
                 </div>
+              ))}
+            </div>
+          </section>
 
-                {/* Army Public School */}
-                <div className="glass-panel" style={{ display: 'flex', flexDirection: 'column', gap: '20px', justifyContent: 'space-between' }}>
-                  <div style={{ display: 'flex', gap: '16px' }}>
-                    <div style={{
-                      background: 'var(--text-primary)',
-                      color: 'var(--bg-solid)',
-                      padding: '10px',
-                      borderRadius: '12px',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      height: '44px',
-                      width: '44px',
-                      flexShrink: 0
-                    }}>
-                      <ArmySchoolLogo size={22} />
-                    </div>
-                    <div>
-                      <h3 style={{ fontSize: '1.2rem', fontWeight: 700 }}>Army Public School</h3>
-                      <div style={{ fontSize: '0.88rem', color: 'var(--text-secondary)', fontWeight: 500 }}>
-                        Intermediate PCM (CBSE)
-                      </div>
-                      <div style={{ fontSize: '0.8rem', color: 'var(--accent)', fontWeight: 600, marginTop: '6px' }}>
-                        Percentage: 96.4%
-                      </div>
-                    </div>
-                  </div>
-                  <div style={{ borderTop: '1px solid var(--card-border)', paddingTop: '12px', fontSize: '0.85rem', color: 'var(--text-secondary)' }}>
-                    Graduated with distinction under CBSE curriculum, specializing in Physics, Chemistry, and Mathematics (PCM).
+          <hr className="section-divider" />
+
+          {/* ============================================
+              Projects
+              ============================================ */}
+          <section id="projects" className="section reveal" ref={addRevealRef}>
+            <div className="section-header">
+              <div className="section-label">Work</div>
+              <h2 className="section-title">Projects</h2>
+            </div>
+
+            <div className="projects-grid">
+              {/* FIRE */}
+              <div className="card" style={{ display: 'flex', flexDirection: 'column' }}>
+                <span className="project-label ai">AI Agent</span>
+                <h3 className="project-title">Fix and Review (FIRE)</h3>
+                <p className="project-description">
+                  AI-powered code agent that automates reviews and generates corrective pull request proposals. Integrates static analysis and runtime testing with model inference, reducing manual review times by 60%.
+                </p>
+                <div className="skill-tags" style={{ marginBottom: '16px' }}>
+                  <SkillTag text="Python" />
+                  <SkillTag text="Machine Learning" />
+                  <SkillTag text="GitHub API" />
+                  <SkillTag text="FastAPI" />
+                </div>
+                <a href="https://github.com/sreshtha10/FIRE" target="_blank" rel="noreferrer" className="project-link">
+                  <GithubIcon size={15} /> View on GitHub <ArrowUpRight size={13} />
+                </a>
+              </div>
+
+              {/* Blink */}
+              <div className="card" style={{ display: 'flex', flexDirection: 'column' }}>
+                <span className="project-label app">macOS App</span>
+                <h3 className="project-title">Blink</h3>
+                <p className="project-description">
+                  Native macOS productivity app built with Swift and SwiftUI. Streamlines daily workflows with intelligent automation, keyboard-first navigation, and seamless system integration.
+                </p>
+                <div className="skill-tags" style={{ marginBottom: '16px' }}>
+                  <SkillTag text="Swift" />
+                  <SkillTag text="SwiftUI" />
+                  <SkillTag text="macOS" />
+                  <SkillTag text="AppKit" />
+                </div>
+                <a href="https://github.com/sreshtha10/blink" target="_blank" rel="noreferrer" className="project-link">
+                  <GithubIcon size={15} /> View on GitHub <ArrowUpRight size={13} />
+                </a>
+              </div>
+            </div>
+          </section>
+
+          <hr className="section-divider" />
+
+          {/* ============================================
+              Certifications
+              ============================================ */}
+          <section id="certifications" className="section reveal" ref={addRevealRef}>
+            <div className="section-header">
+              <div className="section-label">Credentials</div>
+              <h2 className="section-title">Certifications</h2>
+            </div>
+            <Certifications />
+          </section>
+
+          <hr className="section-divider" />
+
+          {/* ============================================
+              Mentorship
+              ============================================ */}
+          <section id="mentorship" className="section reveal" ref={addRevealRef}>
+            <div className="section-header">
+              <div className="section-label">Leadership</div>
+              <h2 className="section-title">
+                <span style={{ display: 'inline-flex', alignItems: 'center', gap: '10px' }}>
+                  <Users size={24} style={{ color: 'var(--text-secondary)' }} />
+                  Mentorship
+                </span>
+              </h2>
+            </div>
+
+            <div className="card mentorship-content" style={{ padding: '28px' }}>
+              <div style={{ display: 'flex', gap: '12px', alignItems: 'center', marginBottom: '16px' }}>
+                <div>
+                  <h3 style={{ fontSize: '1.1rem', fontWeight: 600 }}>Engineering Mentor</h3>
+                  <div style={{ fontSize: '0.82rem', color: 'var(--accent)', fontWeight: 500, marginTop: '2px' }}>
+                    Cisco Women In Tech & Peer Mentorship
                   </div>
                 </div>
               </div>
-            </section>
+              <ul>
+                <li>Mentored junior engineers and university students as part of the <strong>Cisco Women In Tech</strong> program, guiding them through technical challenges and career progression.</li>
+                <li>Led technical design reviews and established CI/CD best practices, raising the engineering bar across the team.</li>
+                <li>Conducted resume reviews and mock interviews, helping aspiring engineers break into tech.</li>
+              </ul>
+            </div>
+          </section>
 
-            {/* Testimonials Section */}
-            <section id="testimonials" style={{ display: 'flex', flexDirection: 'column', gap: '32px' }}>
-              <div style={{ borderBottom: '1px solid var(--card-border)', paddingBottom: '16px' }}>
-                <h2 style={{ fontSize: '1.8rem', fontWeight: 700 }}>
-                  <span style={{ display: 'inline-flex', alignItems: 'center', gap: '12px' }}>
-                    <MessageSquareQuote size={28} style={{ color: 'var(--accent)' }} />
-                    Testimonials
-                  </span>
-                </h2>
-                <p style={{ color: 'var(--text-secondary)' }}>What colleagues and peers say about working together.</p>
-              </div>
+          <hr className="section-divider" />
 
-              <Testimonials />
-            </section>
+          {/* ============================================
+              Testimonials
+              ============================================ */}
+          <section id="testimonials" className="section reveal" ref={addRevealRef}>
+            <div className="section-header">
+              <div className="section-label">Feedback</div>
+              <h2 className="section-title">
+                <span style={{ display: 'inline-flex', alignItems: 'center', gap: '10px' }}>
+                  <MessageSquareQuote size={24} style={{ color: 'var(--text-secondary)' }} />
+                  Testimonials
+                </span>
+              </h2>
+            </div>
+            <Testimonials />
+          </section>
 
-          </main>
+          <hr className="section-divider" />
 
-          {/* Page Footer */}
-          <footer
-            style={{
-              borderTop: '1px solid var(--card-border)',
-              backgroundColor: 'var(--card-bg)',
-              backdropFilter: 'blur(12px)',
-              padding: '32px 0',
-              marginTop: 'auto',
-              transition: 'background-color 0.5s ease'
-            }}
-          >
-            <div
-              className="content-container"
-              style={{
-                flexDirection: 'row',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-                flexWrap: 'wrap',
-                gap: '24px'
-              }}
-            >
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                <div style={{ fontFamily: 'var(--font-sans)', fontSize: '1.1rem', fontWeight: 800, color: 'var(--text-primary)', letterSpacing: '0.1em', textTransform: 'uppercase' }}>
-                  AI/ML and Full Stack Engineer
+          {/* ============================================
+              Education
+              ============================================ */}
+          <section id="education" className="section reveal" ref={addRevealRef}>
+            <div className="section-header">
+              <div className="section-label">Academic</div>
+              <h2 className="section-title">Education</h2>
+            </div>
+
+            <div className="education-grid">
+              <div className="card">
+                <div style={{ display: 'flex', gap: '12px', alignItems: 'flex-start', marginBottom: '8px' }}>
+                  <span style={{ color: 'var(--text-secondary)', marginTop: '2px' }}><ManipalLogo /></span>
+                  <div>
+                    <div className="edu-institution">Manipal University Jaipur</div>
+                    <div className="edu-degree">Bachelor of Technology — Computer Science</div>
+                    <div className="edu-grade">9.7 / 10 CGPA</div>
+                  </div>
+                </div>
+                <div className="edu-extra">
+                  <Award size={14} style={{ color: 'var(--accent)', verticalAlign: 'middle', marginRight: '4px' }} />
+                  <strong>TMA Pai Merit Scholarship (2019–2023)</strong> — Awarded for consistent academic excellence.
                 </div>
               </div>
 
-              <div style={{ display: 'flex', alignItems: 'center', gap: '24px', flexWrap: 'wrap' }}>
-                <div style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>
-                  © {new Date().getFullYear()} All rights reserved.
+              <div className="card">
+                <div style={{ display: 'flex', gap: '12px', alignItems: 'flex-start', marginBottom: '8px' }}>
+                  <span style={{ color: 'var(--text-secondary)', marginTop: '2px' }}><ArmySchoolLogo /></span>
+                  <div>
+                    <div className="edu-institution">Army Public School Varanasi</div>
+                    <div className="edu-degree">Intermediate PCM (CBSE)</div>
+                    <div className="edu-grade">96.4%</div>
+                  </div>
                 </div>
+                <div className="edu-extra">
+                  Graduated with distinction under CBSE curriculum, specializing in Physics, Chemistry, and Mathematics.
+                </div>
+              </div>
+            </div>
+          </section>
 
-                <div style={{ display: 'flex', gap: '16px' }}>
-                  <a
-                    href="https://github.com/sreshtha10"
-                    target="_blank"
-                    rel="noreferrer"
-                    style={{ color: 'var(--text-secondary)', display: 'flex', alignItems: 'center', transition: 'color 0.2s' }}
-                    onMouseEnter={(e) => e.currentTarget.style.color = 'var(--text-primary)'}
-                    onMouseLeave={(e) => e.currentTarget.style.color = 'var(--text-secondary)'}
-                  >
-                    <GithubIcon size={18} />
+        </main>
+
+        {/* ============================================
+            Contact — "Get in touch" footer (Cindy style)
+            ============================================ */}
+        <section id="contact" className="contact-section">
+          <div className="content-container">
+            <hr className="section-divider" style={{ marginBottom: '60px' }} />
+            <div className="contact-inner">
+              <div>
+                <div className="section-label">Contact</div>
+                <h2 className="contact-heading">Get in touch</h2>
+                <p className="contact-subtitle">
+                  Have a project in mind or just want to chat? Feel free to reach out.
+                </p>
+              </div>
+              <div>
+                <div className="contact-links-label">How to find me</div>
+                <div className="contact-links">
+                  <a href="mailto:sreshtha.mehrotra@gmail.com" className="contact-link">
+                    Email Me <ArrowUpRight size={14} />
                   </a>
-                  <a
-                    href="https://linkedin.com/in/sreshtha-mehrotra"
-                    target="_blank"
-                    rel="noreferrer"
-                    style={{ color: 'var(--text-secondary)', display: 'flex', alignItems: 'center', transition: 'color 0.2s' }}
-                    onMouseEnter={(e) => e.currentTarget.style.color = 'var(--text-primary)'}
-                    onMouseLeave={(e) => e.currentTarget.style.color = 'var(--text-secondary)'}
-                  >
-                    <LinkedinIcon size={18} />
+                  <a href="https://linkedin.com/in/sreshtha-mehrotra" target="_blank" rel="noreferrer" className="contact-link">
+                    LinkedIn <ArrowUpRight size={14} />
+                  </a>
+                  <a href="https://github.com/sreshtha10" target="_blank" rel="noreferrer" className="contact-link">
+                    GitHub <ArrowUpRight size={14} />
                   </a>
                 </div>
               </div>
             </div>
-          </footer>
-        </div>
+          </div>
+        </section>
 
+        {/* Footer */}
+        <footer className="site-footer">
+          <div className="content-container">
+            <div className="footer-inner">
+              <div className="footer-copyright">
+                Copyright {new Date().getFullYear()} © Sreshtha Mehrotra
+              </div>
+              <div className="footer-social">
+                <a href="https://github.com/sreshtha10" target="_blank" rel="noreferrer" aria-label="GitHub">
+                  <GithubIcon size={16} />
+                </a>
+                <a href="https://linkedin.com/in/sreshtha-mehrotra" target="_blank" rel="noreferrer" aria-label="LinkedIn">
+                  <LinkedinIcon size={16} />
+                </a>
+                <a href="mailto:sreshtha.mehrotra@gmail.com" aria-label="Email">
+                  <Mail size={16} />
+                </a>
+              </div>
+            </div>
+          </div>
+        </footer>
       </div>
     </CursorTrajectoryProvider>
   );

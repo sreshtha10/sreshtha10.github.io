@@ -21,16 +21,16 @@ const testimonials: Testimonial[] = [
   },
   {
     name: 'Vama Sethia',
-    title: 'Strategy & Operations at Meesho | IIM Lucknow | NMIMS Mumbai',
-    relationship: 'Worked with Sreshtha at Neoperk',
-    date: 'September 23, 2025',
-    text: `I had the pleasure of working closely with Sreshtha, and I can confidently say he is one of the most talented and driven software engineers I've come across. His technical expertise, combined with his ability to think strategically and deliver impactful solutions, truly sets him apart. What stands out most about Sreshtha is his ability to take ownership of complex problems, his attention to detail, and his unwavering commitment to delivering high-quality results. He is also an excellent collaborator who brings energy and positivity to any team he's part of. I highly recommend Sreshtha for any role that demands technical depth, creative problem-solving, and a strong sense of ownership.`,
+    title: "Founder's Office @ The Souled Store | Ex - Pilgrim | Ex - Co-founder @ Neoperk",
+    relationship: 'Managed Sreshtha at Neoperk',
+    date: 'December 10, 2021',
+    text: `During his internship, Sreshtha worked on developing an Android Application from scratch and implementing various features within the same. His eagerness to learn and to broaden his skill set is commendable. He has portrayed out of the box thinking abilities and his work is admired by the entire team.`,
     linkedinUrl: 'https://www.linkedin.com/in/vama-sethia/',
   }
 ];
 
 const QuoteIcon = ({ size = 32 }: { size?: number }) => (
-  <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor" opacity={0.15}>
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor" opacity={0.08}>
     <path d="M4.583 17.321C3.553 16.227 3 15 3 13.011c0-3.5 2.457-6.637 6.03-8.188l.893 1.378c-3.335 1.804-3.987 4.145-4.247 5.621.537-.278 1.24-.375 1.929-.311 1.804.167 3.226 1.648 3.226 3.489a3.5 3.5 0 01-3.5 3.5c-1.073 0-2.099-.49-2.748-1.179zm10 0C13.553 16.227 13 15 13 13.011c0-3.5 2.457-6.637 6.03-8.188l.893 1.378c-3.335 1.804-3.987 4.145-4.247 5.621.537-.278 1.24-.375 1.929-.311 1.804.167 3.226 1.648 3.226 3.489a3.5 3.5 0 01-3.5 3.5c-1.073 0-2.099-.49-2.748-1.179z"/>
   </svg>
 );
@@ -80,137 +80,59 @@ export const Testimonials: React.FC = () => {
   const current = testimonials[activeIndex];
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
-      {/* Testimonial Card */}
+    <div>
       <div
-        className="glass-panel"
-        style={{
-          position: 'relative',
-          overflow: 'hidden',
-          padding: '40px 36px 36px',
-          minHeight: '380px',
-          display: 'flex',
-          flexDirection: 'column',
-          justifyContent: 'space-between',
-        }}
+        className="card testimonial-card"
+        style={{ padding: '32px' }}
       >
-        {/* Background decorative quote */}
+        {/* Background quote icon */}
         <div style={{
           position: 'absolute',
-          top: '20px',
-          right: '24px',
-          opacity: 0.6,
-          color: 'var(--accent)',
+          top: '16px',
+          right: '20px',
+          color: 'var(--text-primary)',
         }}>
-          <QuoteIcon size={48} />
+          <QuoteIcon size={40} />
         </div>
 
         {/* Testimonial body */}
         <div
           style={{
             opacity: isAnimating ? 0 : 1,
-            transform: isAnimating ? 'translateY(8px)' : 'translateY(0)',
+            transform: isAnimating ? 'translateY(6px)' : 'translateY(0)',
             transition: 'opacity 0.15s ease, transform 0.15s ease',
           }}
         >
-          {/* Quote text */}
-          <p style={{
-            fontSize: '0.95rem',
-            lineHeight: '1.75',
-            color: 'var(--text-secondary)',
-            fontStyle: 'italic',
-            marginBottom: '28px',
-            position: 'relative',
-            zIndex: 1,
-          }}>
+          <p className="testimonial-text">
             "{current.text}"
           </p>
 
-          {/* Author info */}
-          <div style={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            flexWrap: 'wrap',
-            gap: '16px',
-            borderTop: '1px solid var(--card-border)',
-            paddingTop: '20px',
-          }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
-              <div>
-                <div style={{
-                  fontWeight: 700,
-                  fontSize: '0.95rem',
-                  color: 'var(--text-primary)',
-                }}>
-                  {current.name}
-                </div>
-                <div style={{
-                  fontSize: '0.78rem',
-                  color: 'var(--text-secondary)',
-                  marginTop: '2px',
-                  maxWidth: '400px',
-                  lineHeight: '1.4',
-                }}>
-                  {current.title}
-                </div>
-                <div style={{
-                  fontSize: '0.72rem',
-                  color: 'var(--accent-secondary)',
-                  marginTop: '4px',
-                  fontWeight: 500,
-                }}>
-                  {current.relationship} • {current.date}
-                </div>
-              </div>
+          <div className="testimonial-author">
+            <div className="testimonial-name">{current.name}</div>
+            <div className="testimonial-title">{current.title}</div>
+            <div className="testimonial-meta">
+              {current.relationship} · {current.date}
             </div>
           </div>
         </div>
       </div>
 
-      {/* Navigation dots and arrows */}
-      <div style={{
-        display: 'flex',
-        justifyContent: 'center',
-        gap: '16px',
-        alignItems: 'center',
-      }}>
+      {/* Navigation */}
+      <div className="testimonial-nav">
         <button
           onClick={() => handleManualSwitch((activeIndex - 1 + testimonials.length) % testimonials.length)}
           aria-label="Previous testimonial"
-          style={{
-            background: 'transparent',
-            border: 'none',
-            color: 'var(--text-secondary)',
-            cursor: 'pointer',
-            padding: '4px',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            transition: 'color 0.2s'
-          }}
-          onMouseEnter={(e) => e.currentTarget.style.color = 'var(--text-primary)'}
-          onMouseLeave={(e) => e.currentTarget.style.color = 'var(--text-secondary)'}
         >
-          <ChevronLeft size={20} />
+          <ChevronLeft size={18} />
         </button>
 
-        <div style={{ display: 'flex', gap: '10px' }}>
+        <div className="testimonial-dots">
           {testimonials.map((_, idx) => (
             <button
               key={idx}
               onClick={() => handleManualSwitch(idx)}
               aria-label={`View testimonial ${idx + 1}`}
-              style={{
-                width: activeIndex === idx ? '28px' : '10px',
-                height: '10px',
-                borderRadius: '5px',
-                border: 'none',
-                background: activeIndex === idx ? 'var(--accent)' : 'var(--card-border)',
-                cursor: 'pointer',
-                transition: 'all 0.3s cubic-bezier(0.16, 1, 0.3, 1)',
-                padding: 0,
-              }}
+              className={`testimonial-dot ${activeIndex === idx ? 'active' : ''}`}
             />
           ))}
         </div>
@@ -218,21 +140,8 @@ export const Testimonials: React.FC = () => {
         <button
           onClick={() => handleManualSwitch((activeIndex + 1) % testimonials.length)}
           aria-label="Next testimonial"
-          style={{
-            background: 'transparent',
-            border: 'none',
-            color: 'var(--text-secondary)',
-            cursor: 'pointer',
-            padding: '4px',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            transition: 'color 0.2s'
-          }}
-          onMouseEnter={(e) => e.currentTarget.style.color = 'var(--text-primary)'}
-          onMouseLeave={(e) => e.currentTarget.style.color = 'var(--text-secondary)'}
         >
-          <ChevronRight size={20} />
+          <ChevronRight size={18} />
         </button>
       </div>
     </div>
